@@ -1,3 +1,5 @@
+mod clap;
+
 use std::collections::HashMap;
 use std::ffi::{OsStr, OsString};
 use std::fs::Permissions;
