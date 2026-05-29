@@ -1,4 +1,5 @@
-mod clap;
+mod clap_config;
+use clap::Parser;
 
 use std::collections::HashMap;
 use std::ffi::{OsStr, OsString};
@@ -6,10 +7,21 @@ use std::fs::Permissions;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 use walkdir::WalkDir;
+use crate::clap_config::{Cli, Commands};
 
 fn main() {
-    let path = Path::new("/Users/rahulsharma/Projects/aeroamenities-backend");
-    scan(path);
+    let cli = Cli::parse();
+
+    match cli.command {
+        Commands::Scan { path, top, hidden } => {
+            println!("Path: {:?}", path);
+            println!("Top files: {}", top);
+            println!("Include hidden: {}", hidden);
+
+            let path = Path::new(&path);
+            scan(path);
+        }
+    }
 }
 
 fn scan(path: &Path) {
