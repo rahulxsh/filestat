@@ -19,12 +19,12 @@ fn main() {
             println!("Include hidden: {}", hidden);
 
             let path = Path::new(&path);
-            scan(path,top);
+            scan(path,top,hidden);
         }
     }
 }
 
-fn scan(path: &Path,top:usize) {
+fn scan(path: &Path,top:usize,hidden:bool) {
     let mut total_file = 0;
     let mut total_dir = 0;
     let mut files_info:Vec<FileInfo> = Vec::new();
@@ -38,6 +38,17 @@ fn scan(path: &Path,top:usize) {
                 continue;
             }
         };
+
+        if !hidden {
+            if entry_dir.path().components().any(|c| {
+                c.as_os_str()
+                    .to_str()
+                    .map(|s| s.starts_with(".") && s != ".")
+                    .unwrap_or(false)
+            }) {
+                continue;
+            }
+        }
 
         let file_type = entry_dir.file_type();
         let metadata = entry_dir.metadata();
