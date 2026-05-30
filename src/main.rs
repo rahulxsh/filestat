@@ -19,12 +19,12 @@ fn main() {
             println!("Include hidden: {}", hidden);
 
             let path = Path::new(&path);
-            scan(path);
+            scan(path,top);
         }
     }
 }
 
-fn scan(path: &Path) {
+fn scan(path: &Path,top:usize) {
     let mut total_file = 0;
     let mut total_dir = 0;
     let mut files_info:Vec<FileInfo> = Vec::new();
@@ -85,7 +85,7 @@ fn scan(path: &Path) {
             println!("\n Largest File:{:?} \n\n",file);
         }
 
-        for (index, file) in files_info.iter().take(10).enumerate() {
+        for (index, file) in files_info.iter().take(top).enumerate() {
             println!(
                 "{}. {} -> {} bytes",
                 index + 1,
