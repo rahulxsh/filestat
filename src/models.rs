@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use std::time::SystemTime;
 
 #[derive(Debug)]
+#[allow(unused)]
 pub struct FileInfo {
     pub path:PathBuf,
     pub size: u64,
