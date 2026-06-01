@@ -3,12 +3,21 @@ use std::ffi::{OsStr, OsString};
 use std::path::Path;
 use walkdir::WalkDir;
 use crate::models::FileInfo;
+use anyhow::{bail, Result};
 
-pub fn scan(path: &Path, top:usize, hidden:bool) {
+pub fn scan(path: &Path, top:usize, hidden:bool) -> Result<()>{
     let mut total_file = 0;
     let mut total_dir = 0;
     let mut files_info:Vec<FileInfo> = Vec::new();
     let mut extensions_count:HashMap<OsString,u64> = HashMap::new();
+
+    if !path.exists() {
+        bail!("Path does not exist: {}", path.display());
+    }
+
+    if !path.is_dir() {
+        bail!("Path is not a directory: {}", path.display());
+    }
 
     for entry_dir in WalkDir::new(path) {
         let entry_dir = match entry_dir {
@@ -91,4 +100,6 @@ pub fn scan(path: &Path, top:usize, hidden:bool) {
     for (exten,count) in extensions_count {
         println!("{:?} -> {}",exten,count);
     }
+
+    Ok(())
 }
