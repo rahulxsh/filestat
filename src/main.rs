@@ -13,7 +13,7 @@ fn main() -> Result<()> {
     match cli.command {
         Commands::Scan { path, top, hidden } => {
             let path = Path::new(&path);
-            let scan_result = scan(path,top,hidden)?;
+            let _scan_result = scan(path,top,hidden)?;
         }
     }
 

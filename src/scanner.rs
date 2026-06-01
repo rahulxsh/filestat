@@ -40,21 +40,30 @@ pub fn scan(path: &Path, top:usize, hidden:bool) -> Result<()>{
         }
 
         let file_type = entry_dir.file_type();
-        let metadata = entry_dir.metadata();
+        let is_file = file_type.is_file();
+        let metadata = match entry_dir.metadata() {
+            Ok(m) => m,
+            Err(e) => {
+                eprintln!(
+                    "Metadata error for {}: {}",
+                    entry_dir.path().display(),
+                    e
+                );
+                continue;
+            }
+        };
 
-        if file_type.is_file() {
-            if let Ok(value) = metadata {
+        if is_file {
                 let f_info = FileInfo {
                     path:entry_dir.path().to_path_buf(),
-                    size:value.len(),
-                    created:value.created().ok(),
-                    modified:value.modified().ok(),
-                    permissions:value.permissions(),
-                    accessed:value.accessed().ok()
+                    size:metadata.len(),
+                    created:metadata.created().ok(),
+                    modified:metadata.modified().ok(),
+                    permissions:metadata.permissions(),
+                    accessed:metadata.accessed().ok()
                 };
 
                 files_info.push(f_info);
-            }
         }
 
         if file_type.is_dir() {
@@ -62,7 +71,7 @@ pub fn scan(path: &Path, top:usize, hidden:bool) -> Result<()>{
             println!("[DIR] {}", entry_dir.path().display());
         }
 
-        if file_type.is_file() {
+        if is_file {
             total_file += 1;
             println!("[FILE] {}", entry_dir.path().display());
 
