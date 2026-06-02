@@ -20,6 +20,15 @@ pub enum Commands {
         top:usize,
 
         #[arg(long, default_value_t = false)]
-        hidden:bool
+        hidden:bool,
+
+        #[arg(long,default_value_t = false)]
+        print_extension:bool,
+
+        #[arg(long, default_value_t = false)]
+        largest_files:bool,
+
+        #[arg(long, default_value_t = false)]
+        size:bool
     }
 }
