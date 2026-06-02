@@ -21,7 +21,7 @@ pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
         let entry_dir = match entry_dir {
             Ok(e) => e,
             Err(err) => {
-                eprintln!("Error: {}", err);
+                eprintln!("Walk Error: {}", err);
                 continue;
             }
         };

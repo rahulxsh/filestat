@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::ffi::{OsStr, OsString};
+use std::ffi::OsString;
 use crate::models::{FileInfo, FilesSize};
 
 pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
@@ -22,14 +22,8 @@ pub fn extension_count(files:&[FileInfo],extension:&str) -> HashMap<OsString,u64
     let mut extensions_count:HashMap<OsString,u64> = HashMap::new();
 
     for file in files {
-
-        if file.path.is_file() {
             if let Some(ext) = file.path.extension() {
                 *extensions_count.entry(ext.to_os_string()).or_insert(0) += 1;
-                if ext == OsStr::new(extension) {
-                    println!("{extension} File -> {}", file.path.display());
-                }
-            }
         }
     }
     extensions_count
