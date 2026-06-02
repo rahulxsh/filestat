@@ -10,7 +10,7 @@ use std::path::{Path};
 use crate::clap_config::{Cli, Commands};
 use crate::scanner::scan;
 use anyhow::{bail, Result};
-use crate::files::json::json_export;
+use crate::files::json::{json_stats, save_json};
 use crate::stats::generate_stats;
 use std::fs;
 
@@ -60,13 +60,13 @@ fn main() -> Result<()> {
             match json {
                 None => {},
                 Some(None) => {
-                    println!("{:?}",json_export(&stats_report));
+                    println!("{:?}",json_stats(&stats_report));
                 },
                 Some(Some(input_file_path)) => {
                     if &input_file_path.as_path().extension().unwrap_or_default().to_string_lossy().to_string()
                             ==
                             "json" {
-                        fs::write(&input_file_path,json_export(&stats_report)?).expect("Unable to write file");
+                        save_json(&input_file_path,&stats_report)?;
                     }else{
                         bail!("Please provide a correct json file name");
                     }

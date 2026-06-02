@@ -1,26 +1,26 @@
 {
-  "total_files": 8310,
-  "total_dirs": 346,
-  "total_size": 381411426,
-  "average_size": 45897.88519855596,
+  "total_files": 8480,
+  "total_dirs": 356,
+  "total_size": 411445348,
+  "average_size": 48519.49858490566,
   "extension_count": {
     "json": 130,
-    "md": 1,
-    "bin": 68,
-    "yml": 1,
-    "o": 7165,
-    "d": 115,
-    "xml": 3,
-    "toml": 1,
     "TAG": 1,
+    "dylib": 4,
     "sample": 14,
+    "d": 115,
+    "yml": 1,
+    "bin": 100,
+    "rmeta": 94,
+    "md": 1,
+    "timestamp": 128,
+    "toml": 1,
     "rlib": 50,
     "iml": 1,
-    "lock": 23,
-    "timestamp": 128,
-    "rmeta": 94,
-    "rs": 11,
-    "dylib": 4
+    "lock": 31,
+    "xml": 3,
+    "o": 7289,
+    "rs": 11
   },
   "largest_files": [
     {
@@ -49,8 +49,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428024,
-        "nanos_since_epoch": 101187753
+        "secs_since_epoch": 1780428374,
+        "nanos_since_epoch": 357962927
       },
       "modified": {
         "secs_since_epoch": 1780164930,
@@ -117,8 +117,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428024,
-        "nanos_since_epoch": 100726335
+        "secs_since_epoch": 1780428374,
+        "nanos_since_epoch": 357498431
       },
       "modified": {
         "secs_since_epoch": 1780164929,
@@ -151,8 +151,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428023,
-        "nanos_since_epoch": 770463948
+        "secs_since_epoch": 1780428374,
+        "nanos_since_epoch": 7033604
       },
       "modified": {
         "secs_since_epoch": 1780164929,
@@ -168,8 +168,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428023,
-        "nanos_since_epoch": 770161864
+        "secs_since_epoch": 1780428374,
+        "nanos_since_epoch": 6566358
       },
       "modified": {
         "secs_since_epoch": 1780164881,
@@ -185,8 +185,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428023,
-        "nanos_since_epoch": 770068780
+        "secs_since_epoch": 1780428374,
+        "nanos_since_epoch": 6408859
       },
       "modified": {
         "secs_since_epoch": 1780053011,
