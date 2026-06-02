@@ -1,10 +1,13 @@
 use std::path::Path;
 use walkdir::WalkDir;
-use crate::models::FileInfo;
+use crate::models::{FileInfo, ScanResult};
 use anyhow::{bail, Result};
 
-pub fn scan(path: &Path, hidden:bool) -> Result<Vec<FileInfo>>{
-    let mut files_info:Vec<FileInfo> = Vec::new();
+pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
+    let mut scan_result = ScanResult {
+        files:Vec::new(),
+        total_dirs:0
+    };
 
     if !path.exists() {
         bail!("Path does not exist: {}", path.display());
@@ -35,6 +38,9 @@ pub fn scan(path: &Path, hidden:bool) -> Result<Vec<FileInfo>>{
         }
 
         let file_type = entry_dir.file_type();
+        if file_type.is_dir() {
+            scan_result.total_dirs +=1;
+        }
         let is_file = file_type.is_file();
         let metadata = match entry_dir.metadata() {
             Ok(m) => m,
@@ -58,9 +64,9 @@ pub fn scan(path: &Path, hidden:bool) -> Result<Vec<FileInfo>>{
                     accessed:metadata.accessed().ok()
                 };
 
-                files_info.push(f_info);
+                scan_result.files.push(f_info);
         }
     }
 
-    Ok(files_info)
+    Ok(scan_result)
 }

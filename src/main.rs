@@ -12,21 +12,27 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Scan { path, top, hidden,print_extension } => {
+        Commands::Scan { path, top, hidden,print_extension,largest_files } => {
             let path = Path::new(&path);
-            let files = scan(path,hidden)?;
-            let extensions = stats::extension_count(&files,"rs");
-            let total_files_and_dir_count = stats::total_file_and_dirs(&files);
+            let mut files = scan(path,hidden)?;
+            println!("Total Files:{}\nTotal Dirs:{}",files.files.len(),files.total_dirs);
 
-            println!("Total Files: {} \nTotal Dirs:{}",
-                     total_files_and_dir_count.total_files,total_files_and_dir_count.total_dirs
-            );
+            let extensions = stats::extension_count(&files.files,"rs");
 
             if print_extension {
                 for (ext,count) in extensions {
                     println!("{:?}:{}",ext,count);
                 }
             }
+
+           if largest_files {
+               let largest_files = stats::largets_files(&mut files.files,top);
+               println!("Largest Files:");
+               for file in largest_files {
+                   println!("PATH:{:?}, SIZE:{}",file.path,file.size);
+               }
+           }
+
         }
     }
 

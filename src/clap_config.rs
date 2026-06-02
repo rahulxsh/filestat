@@ -23,6 +23,9 @@ pub enum Commands {
         hidden:bool,
 
         #[arg(long,default_value_t = false)]
-        print_extension:bool
+        print_extension:bool,
+
+        #[arg(long, default_value_t = false)]
+        largest_files:bool
     }
 }

@@ -12,3 +12,9 @@ pub struct FileInfo {
     pub accessed:Option<SystemTime>,
     pub modified:Option<SystemTime>
 }
+
+#[derive(Debug)]
+pub struct ScanResult {
+    pub files:Vec<FileInfo>,
+    pub total_dirs:usize
+}

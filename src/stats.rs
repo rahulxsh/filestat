@@ -2,31 +2,6 @@ use std::collections::HashMap;
 use std::ffi::{OsStr, OsString};
 use crate::models::FileInfo;
 
-pub struct TotalFileAndDirsCount {
-    pub total_files:u64,
-    pub total_dirs:u64
-}
-
-pub fn total_file_and_dirs(files_info:&[FileInfo]) -> TotalFileAndDirsCount {
-    let mut file_dir_count = TotalFileAndDirsCount {
-        total_dirs:0,
-        total_files:0
-    };
-
-    for file in files_info {
-        if file.path.is_file() {
-            // println!("[FILE 📄]:{}",file.path.display());
-            file_dir_count.total_files +=1;
-        }
-        if file.path.is_dir() {
-            // println!("[DIR 📂]:{}",file.path.display());
-            file_dir_count.total_dirs+=1;
-        }
-    }
-   file_dir_count
-}
-
-
 pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
     let mut largets_files:Vec<&FileInfo> = Vec::new();
 
@@ -35,10 +10,6 @@ pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
     }
 
     files.sort_by(|a,b| b.size.cmp(&a.size) );
-
-    if let Some(file) = files.first() {
-        println!("\n Largest File:{:?} \n\n",file);
-    }
 
     for (index, file) in files.iter().take(top).enumerate() {
         largets_files.push(file)
