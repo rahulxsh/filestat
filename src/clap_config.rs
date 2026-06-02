@@ -30,11 +30,11 @@ pub enum Commands {
 
         #[arg(long, default_value_t = false)]
         size:bool,
-        
+
         #[arg(long, default_value_t = false)]
         total:bool,
-        
-        #[arg(long, default_value_t = false)]
-        json:bool
+
+        #[arg(long, num_args = 0..=1 )]
+        json: Option<Option<PathBuf>>
     }
 }

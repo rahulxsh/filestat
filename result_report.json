@@ -1,0 +1,197 @@
+{
+  "total_files": 8310,
+  "total_dirs": 346,
+  "total_size": 381411426,
+  "average_size": 45897.88519855596,
+  "extension_count": {
+    "json": 130,
+    "md": 1,
+    "bin": 68,
+    "yml": 1,
+    "o": 7165,
+    "d": 115,
+    "xml": 3,
+    "toml": 1,
+    "TAG": 1,
+    "sample": 14,
+    "rlib": 50,
+    "iml": 1,
+    "lock": 23,
+    "timestamp": 128,
+    "rmeta": 94,
+    "rs": 11,
+    "dylib": 4
+  },
+  "largest_files": [
+    {
+      "path": "./target/debug/deps/libclap_builder-65807049d133e591.rlib",
+      "size": 13614296,
+      "created": {
+        "secs_since_epoch": 1780053006,
+        "nanos_since_epoch": 446204086
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780132349,
+        "nanos_since_epoch": 81382547
+      },
+      "modified": {
+        "secs_since_epoch": 1780053006,
+        "nanos_since_epoch": 450621261
+      }
+    },
+    {
+      "path": "./target/debug/deps/libclap_builder-7e29c0116c91e43a.rlib",
+      "size": 13602672,
+      "created": {
+        "secs_since_epoch": 1780164930,
+        "nanos_since_epoch": 461483675
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780428024,
+        "nanos_since_epoch": 101187753
+      },
+      "modified": {
+        "secs_since_epoch": 1780164930,
+        "nanos_since_epoch": 464941438
+      }
+    },
+    {
+      "path": "./target/debug/deps/libsyn-ee2ac9864e7d6018.rlib",
+      "size": 6871024,
+      "created": {
+        "secs_since_epoch": 1780053011,
+        "nanos_since_epoch": 23428209
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780053011,
+        "nanos_since_epoch": 878531905
+      },
+      "modified": {
+        "secs_since_epoch": 1780053011,
+        "nanos_since_epoch": 26878382
+      }
+    },
+    {
+      "path": "./target/debug/deps/libsyn-0022429651e17c7f.rlib",
+      "size": 6853504,
+      "created": {
+        "secs_since_epoch": 1780164880,
+        "nanos_since_epoch": 723058366
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780164881,
+        "nanos_since_epoch": 588039673
+      },
+      "modified": {
+        "secs_since_epoch": 1780164880,
+        "nanos_since_epoch": 724606164
+      }
+    },
+    {
+      "path": "./target/debug/deps/libserde_core-5f9b76f302439b8a.rlib",
+      "size": 5096656,
+      "created": {
+        "secs_since_epoch": 1780053010,
+        "nanos_since_epoch": 854474915
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780053010,
+        "nanos_since_epoch": 854474915
+      },
+      "modified": {
+        "secs_since_epoch": 1780053010,
+        "nanos_since_epoch": 856660003
+      }
+    },
+    {
+      "path": "./target/debug/deps/libserde_core-51ba9076b23d994b.rlib",
+      "size": 5087456,
+      "created": {
+        "secs_since_epoch": 1780164929,
+        "nanos_since_epoch": 985690916
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780428024,
+        "nanos_since_epoch": 100726335
+      },
+      "modified": {
+        "secs_since_epoch": 1780164929,
+        "nanos_since_epoch": 986683086
+      }
+    },
+    {
+      "path": "./target/debug/deps/libserde_core-5f9b76f302439b8a.rmeta",
+      "size": 4758521,
+      "created": {
+        "secs_since_epoch": 1780053010,
+        "nanos_since_epoch": 693846305
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780053012,
+        "nanos_since_epoch": 90966618
+      },
+      "modified": {
+        "secs_since_epoch": 1780053010,
+        "nanos_since_epoch": 772793795
+      }
+    },
+    {
+      "path": "./target/debug/deps/libserde_core-51ba9076b23d994b.rmeta",
+      "size": 4749456,
+      "created": {
+        "secs_since_epoch": 1780164929,
+        "nanos_since_epoch": 871372473
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780428023,
+        "nanos_since_epoch": 770463948
+      },
+      "modified": {
+        "secs_since_epoch": 1780164929,
+        "nanos_since_epoch": 933113921
+      }
+    },
+    {
+      "path": "./target/debug/deps/libserde_derive-53c95434f8e78d1d.dylib",
+      "size": 4133032,
+      "created": {
+        "secs_since_epoch": 1780164881,
+        "nanos_since_epoch": 610628177
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780428023,
+        "nanos_since_epoch": 770161864
+      },
+      "modified": {
+        "secs_since_epoch": 1780164881,
+        "nanos_since_epoch": 611157054
+      }
+    },
+    {
+      "path": "./target/debug/deps/libserde_derive-1af2eeb70f03f854.dylib",
+      "size": 4132968,
+      "created": {
+        "secs_since_epoch": 1780053011,
+        "nanos_since_epoch": 900611574
+      },
+      "readonly": false,
+      "accessed": {
+        "secs_since_epoch": 1780428023,
+        "nanos_since_epoch": 770068780
+      },
+      "modified": {
+        "secs_since_epoch": 1780053011,
+        "nanos_since_epoch": 901063742
+      }
+    }
+  ]
+}
