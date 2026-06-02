@@ -63,9 +63,7 @@ fn main() -> Result<()> {
                     println!("{:?}",json_stats(&stats_report));
                 },
                 Some(Some(input_file_path)) => {
-                    if &input_file_path.as_path().extension().unwrap_or_default().to_string_lossy().to_string()
-                            ==
-                            "json" {
+                    if input_file_path.extension() == Some("json".as_ref()){
                         save_json(&input_file_path,&stats_report)?;
                     }else{
                         bail!("Please provide a correct json file name");
