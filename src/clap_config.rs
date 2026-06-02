@@ -20,6 +20,9 @@ pub enum Commands {
         top:usize,
 
         #[arg(long, default_value_t = false)]
-        hidden:bool
+        hidden:bool,
+
+        #[arg(long,default_value_t = false)]
+        print_extension:bool
     }
 }

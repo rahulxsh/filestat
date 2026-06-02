@@ -1,15 +1,10 @@
-use std::collections::HashMap;
-use std::ffi::{OsStr, OsString};
 use std::path::Path;
 use walkdir::WalkDir;
 use crate::models::FileInfo;
 use anyhow::{bail, Result};
 
-pub fn scan(path: &Path, top:usize, hidden:bool) -> Result<()>{
-    let mut total_file = 0;
-    let mut total_dir = 0;
+pub fn scan(path: &Path, hidden:bool) -> Result<Vec<FileInfo>>{
     let mut files_info:Vec<FileInfo> = Vec::new();
-    let mut extensions_count:HashMap<OsString,u64> = HashMap::new();
 
     if !path.exists() {
         bail!("Path does not exist: {}", path.display());
@@ -65,50 +60,7 @@ pub fn scan(path: &Path, top:usize, hidden:bool) -> Result<()>{
 
                 files_info.push(f_info);
         }
-
-        if file_type.is_dir() {
-            total_dir += 1;
-            println!("[DIR] {}", entry_dir.path().display());
-        }
-
-        if is_file {
-            total_file += 1;
-            println!("[FILE] {}", entry_dir.path().display());
-
-            if let Some(ext) = entry_dir.path().extension() {
-                *extensions_count.entry(ext.to_os_string()).or_insert(0) += 1;
-                if ext == OsStr::new("rs") {
-                    println!("Rust File -> {}", entry_dir.path().display());
-                }
-            }
-        }
     }
 
-    println!("Total files: {}", total_file);
-    println!("Total dirs: {}", total_dir);
-
-    if !files_info.is_empty(){
-        files_info.sort_by(|a,b| b.size.cmp(&a.size) );
-
-        if let Some(file) = files_info.first() {
-            println!("\n Largest File:{:?} \n\n",file);
-        }
-
-        for (index, file) in files_info.iter().take(top).enumerate() {
-            println!(
-                "{}. {} -> {} bytes",
-                index + 1,
-                file.path.display(),
-                file.size
-            );
-        }
-
-    }
-
-
-    for (exten,count) in extensions_count {
-        println!("{:?} -> {}",exten,count);
-    }
-
-    Ok(())
+    Ok(files_info)
 }
