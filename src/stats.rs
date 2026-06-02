@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::ffi::OsString;
 use crate::models::{FileInfo, FilesSize, ScanResult, ScanStats};
 
 pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
@@ -18,12 +17,12 @@ pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
 }
 
 
-pub fn extension_count(files:&[FileInfo]) -> HashMap<OsString,u64> {
-    let mut extensions_count:HashMap<OsString,u64> = HashMap::new();
+pub fn extension_count(files:&[FileInfo]) -> HashMap<String,u64> {
+    let mut extensions_count:HashMap<String,u64> = HashMap::new();
 
     for file in files {
             if let Some(ext) = file.path.extension() {
-                *extensions_count.entry(ext.to_os_string()).or_insert(0) += 1;
+                *extensions_count.entry(ext.to_string_lossy().to_string()).or_insert(0) += 1;
         }
     }
     extensions_count
@@ -45,16 +44,19 @@ pub fn file_size(files:&[FileInfo]) -> FilesSize {
 }
 
 
-pub fn generate_stats(scan_result: &ScanResult) -> ScanStats {
+pub fn generate_stats<'a>(scan_result: &'a mut ScanResult,top:usize) -> ScanStats<'a> {
     let size = file_size(&scan_result.files);
     let extensions = extension_count(&scan_result.files);
+    let total_files = scan_result.files.len();
+    let largest_files = largets_files(&mut scan_result.files,top);
 
     ScanStats {
-        total_files:scan_result.files.len(),
+        total_files,
         total_dirs:scan_result.total_dirs,
         total_size:size.total,
         average_size:size.average,
-        extension_count:extensions
+        extension_count:extensions,
+        largest_files
     }
 }
 

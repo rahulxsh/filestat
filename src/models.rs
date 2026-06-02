@@ -1,16 +1,15 @@
 use std::collections::HashMap;
-use std::ffi::OsString;
-use std::fs::Permissions;
 use std::path::PathBuf;
 use std::time::SystemTime;
+use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Debug,Serialize)]
 #[allow(unused)]
 pub struct FileInfo {
     pub path:PathBuf,
     pub size: u64,
     pub created:Option<SystemTime>,
-    pub permissions: Permissions,
+    pub readonly: bool,
     pub accessed:Option<SystemTime>,
     pub modified:Option<SystemTime>
 }
@@ -28,11 +27,12 @@ pub struct FilesSize {
 }
 
 
-#[derive(Debug)]
-pub struct ScanStats {
+#[derive(Debug,Serialize)]
+pub struct ScanStats<'a> {
     pub total_files:usize,
     pub total_dirs:usize,
     pub total_size:u64,
     pub average_size:f64,
-    pub extension_count:HashMap<OsString,u64>
+    pub extension_count:HashMap<String,u64>,
+    pub largest_files:Vec< &'a FileInfo>
 }

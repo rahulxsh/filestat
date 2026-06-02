@@ -32,6 +32,9 @@ pub enum Commands {
         size:bool,
         
         #[arg(long, default_value_t = false)]
-        total:bool
+        total:bool,
+        
+        #[arg(long, default_value_t = false)]
+        json:bool
     }
 }

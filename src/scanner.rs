@@ -60,7 +60,7 @@ pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
                     size:metadata.len(),
                     created:metadata.created().ok(),
                     modified:metadata.modified().ok(),
-                    permissions:metadata.permissions(),
+                    readonly:metadata.permissions().readonly(),
                     accessed:metadata.accessed().ok()
                 };
 
