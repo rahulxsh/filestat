@@ -12,7 +12,14 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Scan { path, top, hidden,print_extension,largest_files } => {
+        Commands::Scan {
+            path,
+            top,
+            hidden,
+            print_extension,
+            largest_files,
+            size
+        } => {
             let path = Path::new(&path);
             let mut files = scan(path,hidden)?;
             println!("Total Files:{}\nTotal Dirs:{}",files.files.len(),files.total_dirs);
@@ -29,9 +36,17 @@ fn main() -> Result<()> {
                let largest_files = stats::largets_files(&mut files.files,top);
                println!("Largest Files:");
                for file in largest_files {
-                   println!("PATH:{:?}, SIZE:{}",file.path,file.size);
+                   println!("PATH:{:?}, SIZE:{} bytes",file.path,file.size);
                }
            }
+
+            if size {
+                let size = stats::file_size(&files.files);
+
+                println!("Total files size:{:.2} bytes\nAverage File Size:{:.2} bytes",size.total,size.average);
+            }
+
+
 
         }
     }

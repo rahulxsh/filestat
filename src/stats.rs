@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::ffi::{OsStr, OsString};
-use crate::models::FileInfo;
+use crate::models::{FileInfo, FilesSize};
 
 pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
     let mut largets_files:Vec<&FileInfo> = Vec::new();
@@ -33,6 +33,21 @@ pub fn extension_count(files:&[FileInfo],extension:&str) -> HashMap<OsString,u64
         }
     }
     extensions_count
+}
+
+pub fn file_size(files:&[FileInfo]) -> FilesSize {
+    let total:u64 = files.iter().map(|f| f.size).sum();
+
+    let average = if files.is_empty() {
+        0.0
+    }else {
+        total as f64 / files.len() as f64
+    };
+
+    FilesSize {
+        total,
+        average
+    }
 }
 
 

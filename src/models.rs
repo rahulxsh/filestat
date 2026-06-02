@@ -18,3 +18,9 @@ pub struct ScanResult {
     pub files:Vec<FileInfo>,
     pub total_dirs:usize
 }
+
+#[derive(Debug)]
+pub struct FilesSize {
+    pub total:u64,
+    pub average:f64
+}
