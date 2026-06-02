@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::ffi::OsString;
-use crate::models::{FileInfo, FilesSize};
+use crate::models::{FileInfo, FilesSize, ScanResult, ScanStats};
 
 pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
     let mut largets_files:Vec<&FileInfo> = Vec::new();
@@ -18,7 +18,7 @@ pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
 }
 
 
-pub fn extension_count(files:&[FileInfo],extension:&str) -> HashMap<OsString,u64> {
+pub fn extension_count(files:&[FileInfo]) -> HashMap<OsString,u64> {
     let mut extensions_count:HashMap<OsString,u64> = HashMap::new();
 
     for file in files {
@@ -44,5 +44,18 @@ pub fn file_size(files:&[FileInfo]) -> FilesSize {
     }
 }
 
+
+pub fn generate_stats(scan_result: &ScanResult) -> ScanStats {
+    let size = file_size(&scan_result.files);
+    let extensions = extension_count(&scan_result.files);
+
+    ScanStats {
+        total_files:scan_result.files.len(),
+        total_dirs:scan_result.total_dirs,
+        total_size:size.total,
+        average_size:size.average,
+        extension_count:extensions
+    }
+}
 
 

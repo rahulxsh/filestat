@@ -8,6 +8,8 @@ use std::path::{Path};
 use crate::clap_config::{Cli, Commands};
 use crate::scanner::scan;
 use anyhow::Result;
+use crate::stats::generate_stats;
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
@@ -18,16 +20,20 @@ fn main() -> Result<()> {
             hidden,
             print_extension,
             largest_files,
-            size
+            size,
+            total
         } => {
             let path = Path::new(&path);
             let mut files = scan(path,hidden)?;
-            println!("Total Files:{}\nTotal Dirs:{}",files.files.len(),files.total_dirs);
 
-            let extensions = stats::extension_count(&files.files,"rs");
+            let stats_report = generate_stats(&files);
+
+            if total {
+                println!("Total Files:{}\nTotal Dirs:{}\n",stats_report.total_files,stats_report.total_dirs);
+            }
 
             if print_extension {
-                for (ext,count) in extensions {
+                for (ext,count) in stats_report.extension_count {
                     println!("{:?}:{}",ext,count);
                 }
             }
@@ -41,12 +47,11 @@ fn main() -> Result<()> {
            }
 
             if size {
-                let size = stats::file_size(&files.files);
-
-                println!("Total files size:{:.2} bytes\nAverage File Size:{:.2} bytes",size.total,size.average);
+                println!(
+                    "Total files size:{:.2} bytes\nAverage File Size:{:.2} bytes",
+                    stats_report.total_size,stats_report.average_size
+                );
             }
-
-
 
         }
     }
