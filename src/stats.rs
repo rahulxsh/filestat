@@ -11,7 +11,7 @@ pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
 
     files.sort_by(|a,b| b.size.cmp(&a.size) );
 
-    for (index, file) in files.iter().take(top).enumerate() {
+    for (_index, file) in files.iter().take(top).enumerate() {
         largets_files.push(file)
     }
     largets_files
