@@ -1,10 +1,11 @@
+use std::ffi::{OsStr};
 use std::path::Path;
 use walkdir::WalkDir;
 use crate::models::{ScanResult};
 use anyhow::{bail, Result};
 use crate::metadata::get_metadata;
 
-pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
+pub fn scan(path: &Path, hidden:bool,ext:Option<String>) -> Result<ScanResult>{
     let mut scan_result = ScanResult {
         files:Vec::new(),
         total_dirs:0
@@ -56,7 +57,18 @@ pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
         };
 
         if is_file {
-            scan_result.files.push(metadata);
+            if let Some(value) = &ext {
+                match entry_dir.path().extension() {
+                    Some(v) => {
+                        if v == OsStr::new(value) {
+                            scan_result.files.push(metadata);
+                        }
+                    },
+                    None=>{}
+                }
+            }else {
+                scan_result.files.push(metadata);
+            }
         }
     }
 

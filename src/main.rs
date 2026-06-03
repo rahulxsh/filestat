@@ -27,10 +27,11 @@ fn main() -> Result<()> {
             size,
             total,
             json,
-            csv
+            csv,
+            ext
         } => {
             let path = Path::new(&path);
-            let mut files = scan(path,hidden)?;
+            let mut files = scan(path,hidden,ext)?;
 
             let stats_report = generate_stats(&mut files,top);
 

@@ -1,7 +1,6 @@
 use clap::{Parser,Subcommand};
 use std::path::PathBuf;
 
-
 #[derive(Parser,Debug)]
 #[command(name="filestat")]
 #[command(version="1.0")]
@@ -38,6 +37,9 @@ pub enum Commands {
         json: Option<Option<PathBuf>>,
         
         #[arg(long, default_value_t = false )]
-        csv:bool
+        csv:bool,
+        
+        #[arg(long, num_args = 0..=1 )]
+        ext:Option<String>
     }
 }
