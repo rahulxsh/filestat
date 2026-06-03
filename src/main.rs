@@ -5,7 +5,6 @@ mod stats;
 mod files;
 mod metadata;
 
-use std::ffi::OsStr;
 use clap::Parser;
 use std::path::{Path};
 use crate::clap_config::{Cli, Commands};
@@ -13,7 +12,6 @@ use crate::scanner::scan;
 use anyhow::{bail, Result};
 use crate::files::json::{json_stats, save_json};
 use crate::stats::generate_stats;
-use std::fs;
 
 fn main() -> Result<()> {
     let cli = Cli::parse();

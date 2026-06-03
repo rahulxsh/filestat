@@ -1,7 +1,6 @@
-use std::fs::metadata;
 use std::path::Path;
 use walkdir::WalkDir;
-use crate::models::{FileInfo, ScanResult};
+use crate::models::{ScanResult};
 use anyhow::{bail, Result};
 use crate::metadata::get_metadata;
 
@@ -55,7 +54,7 @@ pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
                 continue;
             }
         };
-        
+
         if is_file {
             scan_result.files.push(metadata);
         }
