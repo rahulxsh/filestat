@@ -35,6 +35,7 @@ fn main() -> Result<()> {
             max_size,
             min_size
         } => {
+            println!("Ext:{:?}",ext);
             let path = Path::new(&path);
             let filters = FilterConfig {
                 ext,

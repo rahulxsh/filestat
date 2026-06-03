@@ -56,7 +56,7 @@ pub struct CsvLargeFiles {
     pub size: u64,
 }
 pub struct FilterConfig {
-    pub ext:Option<String>,
+    pub ext:Option<Vec<String>>,
     pub min_size:Option<String>,
     pub max_size:Option<String>
 }
