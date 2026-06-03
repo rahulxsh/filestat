@@ -60,7 +60,7 @@ pub fn scan(path: &Path, hidden:bool,ext:Option<String>) -> Result<ScanResult>{
             if let Some(value) = &ext {
                 match entry_dir.path().extension() {
                     Some(v) => {
-                        if v == OsStr::new(value) {
+                        if v.to_string_lossy().to_lowercase() == value.to_lowercase() {
                             scan_result.files.push(metadata);
                         }
                     },

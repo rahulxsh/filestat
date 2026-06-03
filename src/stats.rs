@@ -22,7 +22,7 @@ pub fn extension_count(files:&[FileInfo]) -> HashMap<String,u64> {
 
     for file in files {
             if let Some(ext) = file.path.extension() {
-                *extensions_count.entry(ext.to_string_lossy().to_string()).or_insert(0) += 1;
+                *extensions_count.entry(ext.to_string_lossy().to_string().to_lowercase()).or_insert(0) += 1;
         }
     }
     extensions_count
