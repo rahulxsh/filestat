@@ -4,6 +4,7 @@ mod scanner;
 mod stats;
 mod files;
 mod metadata;
+mod filters;
 
 use clap::Parser;
 use std::path::{Path};

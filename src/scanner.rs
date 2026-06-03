@@ -1,8 +1,8 @@
-use std::ffi::{OsStr};
 use std::path::Path;
 use walkdir::WalkDir;
 use crate::models::{ScanResult};
 use anyhow::{bail, Result};
+use crate::filters::extension::matches_extension;
 use crate::metadata::get_metadata;
 
 pub fn scan(path: &Path, hidden:bool,ext:Option<String>) -> Result<ScanResult>{
@@ -57,16 +57,9 @@ pub fn scan(path: &Path, hidden:bool,ext:Option<String>) -> Result<ScanResult>{
         };
 
         if is_file {
-            if let Some(value) = &ext {
-                match entry_dir.path().extension() {
-                    Some(v) => {
-                        if v.to_string_lossy().to_lowercase() == value.to_lowercase() {
-                            scan_result.files.push(metadata);
-                        }
-                    },
-                    None=>{}
-                }
-            }else {
+            let include = matches_extension(&metadata,&ext);
+
+            if include {
                 scan_result.files.push(metadata);
             }
         }
