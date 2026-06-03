@@ -4,7 +4,6 @@ use crate::models::{FilterConfig, ScanResult};
 use anyhow::{bail, Result};
 use crate::filters::extension::matches_extension;
 use crate::filters::file_size::{matches_max_file_size, matches_min_file_size};
-use crate::filters::ignore::matches_ignore;
 use crate::metadata::get_metadata;
 
 pub fn scan(
@@ -25,7 +24,19 @@ pub fn scan(
         bail!("Path is not a directory: {}", path.display());
     }
 
-    for entry_dir in WalkDir::new(path) {
+    let walk_dir = WalkDir::new(path)
+        .into_iter()
+        .filter_entry(|v| {
+            let ignore:bool =  match &filters.ignore {
+                Some(val) =>{
+                    !val.iter().any(|pattern| v.path().to_string_lossy().to_string().contains(pattern))
+                }
+                None => false
+            };
+            ignore
+        });
+
+    for entry_dir in walk_dir {
         let entry_dir = match entry_dir {
             Ok(e) => e,
             Err(err) => {
@@ -49,6 +60,7 @@ pub fn scan(
         if file_type.is_dir() {
             scan_result.total_dirs +=1;
         }
+
         let is_file = file_type.is_file();
         let metadata = match get_metadata(&entry_dir) {
             Ok(m) => m,
@@ -67,9 +79,7 @@ pub fn scan(
             &&
                 matches_min_file_size(&metadata,&filters.min_size)
             &&
-                matches_max_file_size(&metadata,&filters.max_size)
-            &&
-                matches_ignore(&metadata,&filters.ignore);
+                matches_max_file_size(&metadata,&filters.max_size);
 
             if include {
                 scan_result.files.push(metadata);
