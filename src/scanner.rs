@@ -3,7 +3,7 @@ use walkdir::WalkDir;
 use crate::models::{ScanResult};
 use anyhow::{bail, Result};
 use crate::filters::extension::matches_extension;
-use crate::filters::file_size::{max_file_size, min_file_size};
+use crate::filters::file_size::{matches_max_file_size, matches_min_file_size};
 use crate::metadata::get_metadata;
 
 pub fn scan(
@@ -66,9 +66,9 @@ pub fn scan(
         if is_file {
             let include = matches_extension(&metadata,&ext)
             &&
-                min_file_size(&metadata,&min_size)
+                matches_min_file_size(&metadata,&min_size)
             &&
-                max_file_size(&metadata,&max_size);
+                matches_max_file_size(&metadata,&max_size);
 
             if include {
                 scan_result.files.push(metadata);

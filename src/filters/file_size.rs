@@ -1,7 +1,7 @@
 use crate::models::FileInfo;
 use crate::utils::size_parser::parse;
 
-pub fn min_file_size(file:&FileInfo, min_size:&Option<String>) -> bool {
+pub fn  matches_min_file_size(file:&FileInfo, min_size:&Option<String>) -> bool {
     match min_size {
         Some(v) => {
             let size = parse(v).unwrap_or(1);
@@ -12,7 +12,7 @@ pub fn min_file_size(file:&FileInfo, min_size:&Option<String>) -> bool {
     }
 }
 
-pub fn max_file_size(file:&FileInfo,max_size:&Option<String>) -> bool {
+pub fn  matches_max_file_size(file:&FileInfo,max_size:&Option<String>) -> bool {
     match max_size {
         Some(v) =>{
             let size = parse(v).unwrap_or(1_000_000);
