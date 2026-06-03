@@ -14,6 +14,7 @@ use crate::scanner::scan;
 use anyhow::{bail, Result};
 use crate::files::csv::export_csv;
 use crate::files::json::{json_stats, save_json};
+use crate::models::FilterConfig;
 use crate::stats::generate_stats;
 
 fn main() -> Result<()> {
@@ -35,7 +36,12 @@ fn main() -> Result<()> {
             min_size
         } => {
             let path = Path::new(&path);
-            let mut files = scan(path,hidden,ext,min_size,max_size)?;
+            let filters = FilterConfig {
+                ext,
+                min_size,
+                max_size
+            };
+            let mut files = scan(path,hidden,filters)?;
 
             let stats_report = generate_stats(&mut files,top);
 

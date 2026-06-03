@@ -55,3 +55,8 @@ pub struct CsvLargeFiles {
     pub path:PathBuf,
     pub size: u64,
 }
+pub struct FilterConfig {
+    pub ext:Option<String>,
+    pub min_size:Option<String>,
+    pub max_size:Option<String>
+}

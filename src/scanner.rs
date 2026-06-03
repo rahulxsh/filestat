@@ -1,6 +1,6 @@
 use std::path::Path;
 use walkdir::WalkDir;
-use crate::models::{ScanResult};
+use crate::models::{FilterConfig, ScanResult};
 use anyhow::{bail, Result};
 use crate::filters::extension::matches_extension;
 use crate::filters::file_size::{matches_max_file_size, matches_min_file_size};
@@ -9,9 +9,7 @@ use crate::metadata::get_metadata;
 pub fn scan(
     path: &Path,
     hidden:bool,
-    ext:Option<String>,
-    min_size:Option<String>,
-    max_size:Option<String>
+    filters:FilterConfig
 ) -> Result<ScanResult>{
     let mut scan_result = ScanResult {
         files:Vec::new(),
@@ -64,11 +62,11 @@ pub fn scan(
         };
 
         if is_file {
-            let include = matches_extension(&metadata,&ext)
+            let include = matches_extension(&metadata,&filters.ext)
             &&
-                matches_min_file_size(&metadata,&min_size)
+                matches_min_file_size(&metadata,&filters.min_size)
             &&
-                matches_max_file_size(&metadata,&max_size);
+                matches_max_file_size(&metadata,&filters.max_size);
 
             if include {
                 scan_result.files.push(metadata);
