@@ -40,6 +40,12 @@ pub enum Commands {
         csv:bool,
         
         #[arg(long, num_args = 0..=1 )]
-        ext:Option<String>
+        ext:Option<String>,
+        
+        #[arg(long, num_args = 0..=1 )]
+        min_size:Option<String>,
+        
+        #[arg(long, num_args = 0..=1 )]
+        max_size:Option<String>
     }
 }

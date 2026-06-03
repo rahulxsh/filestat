@@ -1,5 +1,5 @@
 use csv::{WriterBuilder};
-use crate::models::{CsvLargeFiles, CsvScanStats, ExtensionCount, FileInfo, ScanStats};
+use crate::models::{CsvLargeFiles, CsvScanStats, ExtensionCount, ScanStats};
 use anyhow::Result;
 use std::fs;
 
@@ -14,7 +14,7 @@ pub fn export_csv(files:&ScanStats) -> Result<()> {
     }
 
     let data = String::from_utf8(extensions_writer.into_inner()?)?;
-    fs::write("extension_stats.csv",data).expect("Unable to write extension stats csv file");;
+    fs::write("extension_stats.csv",data).expect("Unable to write extension stats csv file");
 
     let mut largest_writer = WriterBuilder::new().from_writer(vec![]);
 

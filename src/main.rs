@@ -5,6 +5,7 @@ mod stats;
 mod files;
 mod metadata;
 mod filters;
+mod utils;
 
 use clap::Parser;
 use std::path::{Path};
@@ -29,10 +30,12 @@ fn main() -> Result<()> {
             total,
             json,
             csv,
-            ext
+            ext,
+            max_size,
+            min_size
         } => {
             let path = Path::new(&path);
-            let mut files = scan(path,hidden,ext)?;
+            let mut files = scan(path,hidden,ext,min_size,max_size)?;
 
             let stats_report = generate_stats(&mut files,top);
 
