@@ -33,14 +33,16 @@ fn main() -> Result<()> {
             csv,
             ext,
             max_size,
-            min_size
+            min_size,
+            ignore
         } => {
             println!("Ext:{:?}",ext);
             let path = Path::new(&path);
             let filters = FilterConfig {
                 ext,
                 min_size,
-                max_size
+                max_size,
+                ignore
             };
             let mut files = scan(path,hidden,filters)?;
 

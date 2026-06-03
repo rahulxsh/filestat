@@ -4,6 +4,7 @@ use crate::models::{FilterConfig, ScanResult};
 use anyhow::{bail, Result};
 use crate::filters::extension::matches_extension;
 use crate::filters::file_size::{matches_max_file_size, matches_min_file_size};
+use crate::filters::ignore::matches_ignore;
 use crate::metadata::get_metadata;
 
 pub fn scan(
@@ -66,7 +67,9 @@ pub fn scan(
             &&
                 matches_min_file_size(&metadata,&filters.min_size)
             &&
-                matches_max_file_size(&metadata,&filters.max_size);
+                matches_max_file_size(&metadata,&filters.max_size)
+            &&
+                matches_ignore(&metadata,&filters.ignore);
 
             if include {
                 scan_result.files.push(metadata);

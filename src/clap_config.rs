@@ -35,17 +35,20 @@ pub enum Commands {
 
         #[arg(long, num_args = 0..=1 )]
         json: Option<Option<PathBuf>>,
-        
+
         #[arg(long, default_value_t = false )]
         csv:bool,
-        
-        #[arg(long, num_args = 0..=1 )]
+
+        #[arg(long)]
         ext:Option<Vec<String>>,
-        
+
         #[arg(long, num_args = 0..=1 )]
         min_size:Option<String>,
-        
+
         #[arg(long, num_args = 0..=1 )]
-        max_size:Option<String>
+        max_size:Option<String>,
+
+        #[arg(long)]
+        ignore:Option<Vec<String>>
     }
 }
