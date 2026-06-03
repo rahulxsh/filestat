@@ -1,7 +1,9 @@
+use std::fs::metadata;
 use std::path::Path;
 use walkdir::WalkDir;
 use crate::models::{FileInfo, ScanResult};
 use anyhow::{bail, Result};
+use crate::metadata::get_metadata;
 
 pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
     let mut scan_result = ScanResult {
@@ -42,7 +44,7 @@ pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
             scan_result.total_dirs +=1;
         }
         let is_file = file_type.is_file();
-        let metadata = match entry_dir.metadata() {
+        let metadata = match get_metadata(&entry_dir) {
             Ok(m) => m,
             Err(e) => {
                 eprintln!(
@@ -53,18 +55,9 @@ pub fn scan(path: &Path, hidden:bool) -> Result<ScanResult>{
                 continue;
             }
         };
-
+        
         if is_file {
-                let f_info = FileInfo {
-                    path:entry_dir.path().to_path_buf(),
-                    size:metadata.len(),
-                    created:metadata.created().ok(),
-                    modified:metadata.modified().ok(),
-                    readonly:metadata.permissions().readonly(),
-                    accessed:metadata.accessed().ok()
-                };
-
-                scan_result.files.push(f_info);
+            scan_result.files.push(metadata);
         }
     }
 

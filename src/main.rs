@@ -3,6 +3,7 @@ mod models;
 mod scanner;
 mod stats;
 mod files;
+mod metadata;
 
 use std::ffi::OsStr;
 use clap::Parser;

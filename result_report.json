@@ -1,26 +1,26 @@
 {
-  "total_files": 8480,
-  "total_dirs": 356,
-  "total_size": 411445348,
-  "average_size": 48519.49858490566,
+  "total_files": 8739,
+  "total_dirs": 358,
+  "total_size": 409544238,
+  "average_size": 46863.9704771713,
   "extension_count": {
-    "json": 130,
-    "TAG": 1,
-    "dylib": 4,
-    "sample": 14,
-    "d": 115,
-    "yml": 1,
-    "bin": 100,
+    "bin": 92,
     "rmeta": 94,
-    "md": 1,
-    "timestamp": 128,
-    "toml": 1,
-    "rlib": 50,
+    "rs": 12,
+    "dylib": 4,
+    "yml": 1,
     "iml": 1,
-    "lock": 31,
+    "toml": 1,
+    "d": 115,
+    "TAG": 1,
+    "lock": 29,
     "xml": 3,
-    "o": 7289,
-    "rs": 11
+    "json": 131,
+    "timestamp": 128,
+    "o": 7545,
+    "sample": 14,
+    "rlib": 50,
+    "md": 1
   },
   "largest_files": [
     {
@@ -49,8 +49,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428374,
-        "nanos_since_epoch": 357962927
+        "secs_since_epoch": 1780482447,
+        "nanos_since_epoch": 467979066
       },
       "modified": {
         "secs_since_epoch": 1780164930,
@@ -117,8 +117,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428374,
-        "nanos_since_epoch": 357498431
+        "secs_since_epoch": 1780482447,
+        "nanos_since_epoch": 467539898
       },
       "modified": {
         "secs_since_epoch": 1780164929,
@@ -151,8 +151,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428374,
-        "nanos_since_epoch": 7033604
+        "secs_since_epoch": 1780482445,
+        "nanos_since_epoch": 20958323
       },
       "modified": {
         "secs_since_epoch": 1780164929,
@@ -168,8 +168,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428374,
-        "nanos_since_epoch": 6566358
+        "secs_since_epoch": 1780482445,
+        "nanos_since_epoch": 20658448
       },
       "modified": {
         "secs_since_epoch": 1780164881,
@@ -185,8 +185,8 @@
       },
       "readonly": false,
       "accessed": {
-        "secs_since_epoch": 1780428374,
-        "nanos_since_epoch": 6408859
+        "secs_since_epoch": 1780482445,
+        "nanos_since_epoch": 20562489
       },
       "modified": {
         "secs_since_epoch": 1780053011,
