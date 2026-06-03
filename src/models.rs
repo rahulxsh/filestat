@@ -36,3 +36,22 @@ pub struct ScanStats<'a> {
     pub extension_count:HashMap<String,u64>,
     pub largest_files:Vec< &'a FileInfo>
 }
+
+#[derive(Debug,Serialize)]
+pub struct ExtensionCount<'a> {
+    pub extension:&'a String,
+    pub count:u64
+}
+
+#[derive(Debug,Serialize)]
+pub struct CsvScanStats<T> {
+    pub key:String,
+    pub value:T
+}
+
+
+#[derive(Debug,Serialize)]
+pub struct CsvLargeFiles {
+    pub path:PathBuf,
+    pub size: u64,
+}

@@ -10,6 +10,7 @@ use std::path::{Path};
 use crate::clap_config::{Cli, Commands};
 use crate::scanner::scan;
 use anyhow::{bail, Result};
+use crate::files::csv::export_csv;
 use crate::files::json::{json_stats, save_json};
 use crate::stats::generate_stats;
 
@@ -25,7 +26,8 @@ fn main() -> Result<()> {
             largest_files,
             size,
             total,
-            json
+            json,
+            csv
         } => {
             let path = Path::new(&path);
             let mut files = scan(path,hidden)?;
@@ -68,6 +70,10 @@ fn main() -> Result<()> {
                         bail!("Please provide a correct json file name");
                     }
                 }
+            }
+
+            if csv {
+                export_csv(&stats_report)?;
             }
         }
     }

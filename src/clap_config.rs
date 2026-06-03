@@ -35,6 +35,9 @@ pub enum Commands {
         total:bool,
 
         #[arg(long, num_args = 0..=1 )]
-        json: Option<Option<PathBuf>>
+        json: Option<Option<PathBuf>>,
+        
+        #[arg(long, default_value_t = false )]
+        csv:bool
     }
 }
