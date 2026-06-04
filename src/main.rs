@@ -8,17 +8,18 @@ mod filters;
 mod utils;
 mod hashing;
 
+use std::collections::HashMap;
 use clap::Parser;
-use std::path::{Path};
+use std::path::{Path, PathBuf};
 use crate::clap_config::{Cli, Commands};
 use crate::scanner::scan;
 use anyhow::{bail, Result};
 use crate::files::csv::export_csv;
 use crate::files::json::{json_stats, save_json};
-use crate::hashing::get_duplicates::get_duplicates;
-use crate::hashing::hash_file::hash_file;
+use crate::hashing::get_duplicates::{get_full_duplicates};
 use crate::models::FilterConfig;
 use crate::stats::generate_stats;
+use std::time::Instant;
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -40,7 +41,7 @@ fn main() -> Result<()> {
             ignore,
             duplicate
         } => {
-            println!("Ext:{:?}",ext);
+            let start_time = Instant::now();
             let path = Path::new(&path);
             let filters = FilterConfig {
                 ext,
@@ -95,16 +96,31 @@ fn main() -> Result<()> {
             }
 
             if duplicate {
-                let duplicates = get_duplicates(&files);
-                let mut count = 1;
+                let duplicate_start_time = Instant::now();
+                let mut unique_file_size_map: HashMap<u64, Vec<PathBuf>> = HashMap::new();
+                for i in &mut files.files {
+                    let path = std::mem::take(&mut i.path);
+                    unique_file_size_map.entry(i.size).or_default().push(path);
+                }
 
-                for (_key,val) in duplicates? {
+                println!("-----------------------");
+                println!("Unique file size mapping done ✅");
+                println!("-----------------------");
+
+                let duplicates = get_full_duplicates(unique_file_size_map)?;
+                let mut count = 0;
+
+                for (_key, val) in duplicates {
                     if val.len() > 1 {
-                        println!("Duplicate Group {}:{:?}",count,val);
-                        count = count+1;
+                        count += 1;
                     }
                 }
+                println!("Total duplicate groups count: {}", count);
+                let duplicate_total_time = duplicate_start_time.elapsed();
+                println!("Time taken in duplication check: {:?}", duplicate_total_time);
             }
+        let duration = start_time.elapsed();
+            println!("Total time:{:?}",duration);
         }
     }
 
