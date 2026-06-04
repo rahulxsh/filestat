@@ -49,6 +49,9 @@ pub enum Commands {
         max_size:Option<String>,
 
         #[arg(long)]
-        ignore:Option<Vec<String>>
+        ignore:Option<Vec<String>>,
+        
+        #[arg(long, default_value_t = false )]
+        duplicate:bool
     }
 }

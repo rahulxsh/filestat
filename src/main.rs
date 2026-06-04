@@ -6,6 +6,7 @@ mod files;
 mod metadata;
 mod filters;
 mod utils;
+mod hashing;
 
 use clap::Parser;
 use std::path::{Path};
@@ -14,6 +15,8 @@ use crate::scanner::scan;
 use anyhow::{bail, Result};
 use crate::files::csv::export_csv;
 use crate::files::json::{json_stats, save_json};
+use crate::hashing::get_duplicates::get_duplicates;
+use crate::hashing::hash_file::hash_file;
 use crate::models::FilterConfig;
 use crate::stats::generate_stats;
 
@@ -34,7 +37,8 @@ fn main() -> Result<()> {
             ext,
             max_size,
             min_size,
-            ignore
+            ignore,
+            duplicate
         } => {
             println!("Ext:{:?}",ext);
             let path = Path::new(&path);
@@ -88,6 +92,18 @@ fn main() -> Result<()> {
 
             if csv {
                 export_csv(&stats_report)?;
+            }
+
+            if duplicate {
+                let duplicates = get_duplicates(&files);
+                let mut count = 1;
+
+                for (_key,val) in duplicates? {
+                    if val.len() > 1 {
+                        println!("Duplicate Group {}:{:?}",count,val);
+                        count = count+1;
+                    }
+                }
             }
         }
     }
