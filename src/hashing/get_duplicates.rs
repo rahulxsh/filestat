@@ -14,14 +14,14 @@ pub fn get_full_duplicates(size_map:HashMap<u64,Vec<PathBuf>>) -> Result<(HashMa
 
         if file_paths.len() > 1 {
             let partial_hash_map:HashMap<Hash,Vec<PathBuf>> = file_paths
-                .par_iter()
+                .into_par_iter()
                 .filter_map(|v| {
                     hash_file_partial(&v).ok().map(|phash| (phash,v))
                 })
                 .fold(
                     || HashMap::new(),
                     | mut local_map:HashMap<Hash,Vec<PathBuf>>, (phash,v) |  {
-                        local_map.entry(phash).or_default().push(v.clone());
+                        local_map.entry(phash).or_default().push(v);
                         local_map
                     }
                 )
@@ -36,13 +36,13 @@ pub fn get_full_duplicates(size_map:HashMap<u64,Vec<PathBuf>>) -> Result<(HashMa
                 );
 
             let results: Vec<Result<(Hash, PathBuf)>> = partial_hash_map
-                .par_iter()
+                .into_par_iter()
                 .filter(|(_, candidate_paths)| candidate_paths.len() > 1)
                 .flat_map(|(_, candidate_paths)| candidate_paths)
                 .map(|path| {
                     // If hash_file returns an anyhow::Error, the ? works perfectly here
-                    let f_hash = hash_file(path)?;
-                    Ok((f_hash, path.clone()))
+                    let f_hash = hash_file(&path)?;
+                    Ok((f_hash, path))
                 })
                 .collect();
 
