@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fs::Permissions;
 use std::path::PathBuf;
 use std::time::SystemTime;
 use serde::Serialize;
@@ -34,7 +35,8 @@ pub struct ScanStats<'a> {
     pub total_size:u64,
     pub average_size:f64,
     pub extension_count:HashMap<String,u64>,
-    pub largest_files:Vec< &'a FileInfo>
+    pub largest_files:Vec< &'a FileInfo>,
+    pub performance_metrics: &'a PerformanceMetrics
 }
 
 #[derive(Debug,Serialize)]
@@ -60,4 +62,11 @@ pub struct FilterConfig {
     pub min_size:Option<String>,
     pub max_size:Option<String>,
     pub ignore:Option<Vec<String>>
+}
+
+#[derive(Debug,Serialize)]
+pub struct PerformanceMetrics {
+    pub duration_secs: f64,
+    pub files_scanned: usize,
+    pub files_per_second: f64,
 }

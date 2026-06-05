@@ -1,9 +1,9 @@
 use std::path::PathBuf;
-use crate::models::ScanStats;
+use crate::models::{ScanStats};
 use anyhow::Result;
 use std::fs::write;
 
-pub fn json_stats(stats:&ScanStats)-> Result<String> {
+pub fn json_stats(stats:&ScanStats) -> Result<String> {
     let json = serde_json::to_string_pretty(stats)?;
 
     Ok(json)

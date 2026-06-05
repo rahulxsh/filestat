@@ -6,7 +6,7 @@ use crate::hashing::hash_file::{hash_file, hash_file_partial};
 use rayon::prelude::*;
 
 
-pub fn get_full_duplicates(size_map:HashMap<u64,Vec<PathBuf>>) -> Result<HashMap<Hash, Vec<PathBuf>>> {
+pub fn get_full_duplicates(size_map:HashMap<u64,Vec<PathBuf>>) -> Result<(HashMap<Hash, Vec<PathBuf>>,u64)> {
     let mut final_duplicates: HashMap<Hash, Vec<PathBuf>> = HashMap::new();
     let mut total_hashes_computed = 0;
 
@@ -54,7 +54,5 @@ pub fn get_full_duplicates(size_map:HashMap<u64,Vec<PathBuf>>) -> Result<HashMap
         }
     }
 
-    println!("Total full file hashes computed: {}", total_hashes_computed);
-
-    Ok(final_duplicates)
+    Ok((final_duplicates,total_hashes_computed))
  }

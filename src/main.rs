@@ -17,9 +17,9 @@ use anyhow::{bail, Result};
 use crate::files::csv::export_csv;
 use crate::files::json::{json_stats, save_json};
 use crate::hashing::get_duplicates::{get_full_duplicates};
-use crate::models::FilterConfig;
+use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -50,8 +50,21 @@ fn main() -> Result<()> {
                 ignore
             };
             let mut files = scan(path,hidden,filters)?;
+            let duration = start_time.elapsed().as_secs_f64();
 
-            let stats_report = generate_stats(&mut files,top);
+            let files_per_second = if duration > 0.0 {
+                files.files.len() as f64 / duration
+            } else {
+                0.0
+            };
+
+            let performance_metrics = PerformanceMetrics {
+                duration_secs:duration,
+                files_scanned:files.files.len(),
+                files_per_second
+            };
+
+            let stats_report = generate_stats(&mut files,top,&performance_metrics);
 
             if total {
                 println!("Total Files:{}\nTotal Dirs:{}\n",stats_report.total_files,stats_report.total_dirs);
@@ -94,6 +107,9 @@ fn main() -> Result<()> {
             if csv {
                 export_csv(&stats_report)?;
             }
+            println!("\n ✅ Files Scan Summary\n--------------\nFiles Scanned: {}\nDuration: {}s\nFiles/sec: {}",
+                     performance_metrics.files_scanned, performance_metrics.duration_secs, performance_metrics.files_per_second);
+
 
             if duplicate {
                 let duplicate_start_time = Instant::now();
@@ -103,11 +119,8 @@ fn main() -> Result<()> {
                     unique_file_size_map.entry(i.size).or_default().push(path);
                 }
 
-                println!("-----------------------");
-                println!("Unique file size mapping done ✅");
-                println!("-----------------------");
-
-                let duplicates = get_full_duplicates(unique_file_size_map)?;
+                let (duplicates,total_expected_duplicate_files) = get_full_duplicates(unique_file_size_map)?;
+                let duplicate_total_time = duplicate_start_time.elapsed().as_secs_f64();
                 let mut count = 0;
 
                 for (_key, val) in duplicates {
@@ -115,12 +128,14 @@ fn main() -> Result<()> {
                         count += 1;
                     }
                 }
-                println!("Total duplicate groups count: {}", count);
-                let duplicate_total_time = duplicate_start_time.elapsed();
-                println!("Time taken in duplication check: {:?}", duplicate_total_time);
+                let per_second_file_scan_duplicate = total_expected_duplicate_files as f64 / duplicate_total_time;
+
+                println!("\n ✅ Duplicate Scan Summary\n--------------");
+                println!("Expected duplicate files: {}", total_expected_duplicate_files);
+                println!("Total duplicate files: {}", count);
+                println!("Duration: {}s", duplicate_total_time);
+                println!("File scan per Second: {}\n",per_second_file_scan_duplicate);
             }
-        let duration = start_time.elapsed();
-            println!("Total time:{:?}",duration);
         }
     }
 

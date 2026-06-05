@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::models::{FileInfo, FilesSize, ScanResult, ScanStats};
+use crate::models::{FileInfo, FilesSize, PerformanceMetrics, ScanResult, ScanStats};
 
 pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
     let mut largets_files:Vec<&FileInfo> = Vec::new();
@@ -44,7 +44,7 @@ pub fn file_size(files:&[FileInfo]) -> FilesSize {
 }
 
 
-pub fn generate_stats<'a>(scan_result: &'a mut ScanResult,top:usize) -> ScanStats<'a> {
+pub fn generate_stats<'a>(scan_result: &'a mut ScanResult,top:usize,metrics:&'a PerformanceMetrics) -> ScanStats<'a> {
     let size = file_size(&scan_result.files);
     let extensions = extension_count(&scan_result.files);
     let total_files = scan_result.files.len();
@@ -56,7 +56,8 @@ pub fn generate_stats<'a>(scan_result: &'a mut ScanResult,top:usize) -> ScanStat
         total_size:size.total,
         average_size:size.average,
         extension_count:extensions,
-        largest_files
+        largest_files,
+        performance_metrics:metrics
     }
 }
 
