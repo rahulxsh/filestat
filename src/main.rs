@@ -134,7 +134,7 @@ fn main() -> Result<()> {
                 println!("Expected duplicate files: {}", total_expected_duplicate_files);
                 println!("Total duplicate files: {}", count);
                 println!("Duration: {}s", duplicate_total_time);
-                println!("File scan per Second: {}\n",per_second_file_scan_duplicate);
+                println!("Hashes/sec: {}\n",per_second_file_scan_duplicate);
             }
         }
     }
