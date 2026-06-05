@@ -5,42 +5,6 @@ use blake3::Hash;
 use crate::hashing::hash_file::{hash_file, hash_file_partial};
 use rayon::prelude::*;
 
-// pub fn get_duplicates(files:HashMap<Hash,Vec<PathBuf>>) -> Result<HashMap<Hash,Vec<PathBuf>>> {
-//     let mut map:HashMap<Hash,Vec<PathBuf>> = HashMap::new();
-//     let mut count = 0;
-//
-//     for (_key,file_paths) in files {
-//         if file_paths.len() > 1 {
-//             for f  in file_paths {
-//                 let hash = hash_file(&f)?;
-//                 map.entry(hash).or_default().push(f);
-//                 count+=1;
-//             }
-//         }
-//     }
-//
-//     println!("Total files hash count:{}",count);
-//
-//     Ok(map)
-// }
-
-// pub fn get_partial_duplicates(files:HashMap<u64,Vec<PathBuf>>) -> HashMap<Hash,Vec<PathBuf>> {
-//     let mut partial_hash_map: HashMap<Hash, Vec<PathBuf>> = HashMap::new();
-//
-//
-//     for (_key,file_paths) in files {
-//        if file_paths.len() > 1 {
-//            for path in file_paths {
-//                // hash_file_partial reads up to 4KB.
-//                if let Ok(p_hash) = hash_file_partial(&path) {
-//                    partial_hash_map.entry(p_hash).or_default().push(path);
-//                }
-//            }
-//        }
-//     }
-//
-//     partial_hash_map
-// }
 
 pub fn get_full_duplicates(size_map:HashMap<u64,Vec<PathBuf>>) -> Result<HashMap<Hash, Vec<PathBuf>>> {
     let mut final_duplicates: HashMap<Hash, Vec<PathBuf>> = HashMap::new();
