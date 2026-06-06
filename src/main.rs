@@ -144,7 +144,7 @@ fn main() -> Result<()> {
             path
         } => {
             if path.exists() {
-                watch_start()?;
+                watch_start(&path)?;
             } else {
                 println!("Given Path doesn't exist");
             }
