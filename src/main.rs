@@ -7,6 +7,7 @@ mod metadata;
 mod filters;
 mod utils;
 mod hashing;
+mod watch;
 
 use std::collections::HashMap;
 use clap::Parser;
@@ -19,7 +20,8 @@ use crate::files::json::{json_stats, save_json};
 use crate::hashing::get_duplicates::{get_full_duplicates};
 use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
-use std::time::{Duration, Instant};
+use std::time::{Instant};
+use crate::watch::watch::watch_start;
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
@@ -135,6 +137,16 @@ fn main() -> Result<()> {
                 println!("Total duplicate files: {}", count);
                 println!("Duration: {}s", duplicate_total_time);
                 println!("Hashes/sec: {}\n",per_second_file_scan_duplicate);
+            }
+        }
+
+        Commands::Watch {
+            path
+        } => {
+            if path.exists() {
+                watch_start()?;
+            } else {
+                println!("Given Path doesn't exist");
             }
         }
     }

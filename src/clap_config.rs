@@ -53,5 +53,8 @@ pub enum Commands {
         
         #[arg(long, default_value_t = false )]
         duplicate:bool
+    },
+    Watch {
+        path:PathBuf
     }
 }
