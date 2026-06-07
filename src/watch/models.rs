@@ -1,6 +1,7 @@
 use std::collections::HashMap;
+use std::fmt::{write, Display, Formatter};
 use std::path::{Path, PathBuf};
-use std::time::UNIX_EPOCH;
+use std::time::{SystemTime, UNIX_EPOCH};
 use crate::models::FilterConfig;
 use crate::scanner::scan;
 use anyhow::Result;
@@ -76,4 +77,65 @@ pub struct BaselineFileInfo {
     pub size:u64,
     pub hash:String,
     pub modified:u64
+}
+
+#[derive(Debug)]
+pub enum AlertType {
+    FileCreated,
+    FileDeleted,
+
+    DirectoryCreated,
+    DirectoryDeleted,
+
+    HashChanged,
+
+    PermissionChanged,
+    OwnershipChanged,
+}
+
+#[derive(Debug)]
+pub enum Severity {
+    Low,
+    Medium,
+    High,
+    Critical,
+}
+
+#[derive(Debug)]
+pub struct Alert {
+    pub timestamp: SystemTime,
+    pub alert_type: AlertType,
+    pub severity: Severity,
+    pub path: PathBuf,
+
+    pub old_hash: Option<String>,
+    pub new_hash: Option<String>,
+
+    pub old_size:Option<u64>,
+    pub new_size:Option<u64>
+}
+
+impl Display for Severity {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Severity::Low => write!(f, "LOW"),
+            Severity::Medium => write!(f, "MEDIUM"),
+            Severity::High => write!(f, "HIGH"),
+            Severity::Critical => write!(f, "CRITICAL"),
+        }
+    }
+}
+
+impl Display for AlertType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AlertType::FileCreated => write!(f,"FILE CREATED"),
+            AlertType::FileDeleted => write!(f,"FILE DELETED"),
+            AlertType::HashChanged => write!(f,"HASH CHANGED"),
+            AlertType::DirectoryCreated => write!(f,"DIRECTORY CREATED"),
+            AlertType::DirectoryDeleted => write!(f,"DIRECTORY DELETED"),
+            AlertType::PermissionChanged => write!(f,"PERMISSION CHANGED"),
+            AlertType::OwnershipChanged => write!(f,"OWNERSHIP CHANGED")
+        }
+    }
 }

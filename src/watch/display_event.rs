@@ -1,14 +1,15 @@
 use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
-use std::time::UNIX_EPOCH;
+use std::time::{SystemTime, UNIX_EPOCH};
 use notify::event::{CreateKind, ModifyKind};
 use notify::{Event, EventKind};
 use crate::hashing::hash_file::hash_file;
 use crate::watch::baseline_store::update_baseline_file;
-use crate::watch::models::{BaseLineFile, BaselineFileInfo, EventTypes};
+use crate::watch::models::{Alert, AlertType, BaseLineFile, BaselineFileInfo, EventTypes, Severity};
 use anyhow::Result;
+use crate::watch::alert::print_alert;
 
-pub fn display_event(event:&Event,base_path:&Path,baseline:&mut BaseLineFile) {
+pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) {
     match event.kind {
         EventKind::Create(CreateKind::File) => {
             display(&event.paths,EventTypes::CREATE,base_path);
@@ -64,9 +65,15 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut BaseLineFile) {
                             if &old_hash.hash != &new_hash {
                                 if let Ok(relative_path) = path.strip_prefix(base_path) {
                                     display_integrity(
-                                        relative_path,&old_hash.hash, &new_hash,
-                                        old_hash.size , size,
-                                        old_hash.modified, modified
+                                        relative_path.to_path_buf(),
+                                        old_hash.hash.clone(),
+                                        new_hash.clone(),
+                                        old_hash.size,
+                                        size,
+                                        old_hash.modified,
+                                        modified,
+                                        AlertType::HashChanged,
+                                        Severity::High
                                     );
                                 }
                             }
@@ -132,32 +139,30 @@ impl Display for EventTypes {
 }
 
 fn display_integrity(
-    path:&Path,
-    old_hash:&str,
-    new_hash:&str,
+    path:PathBuf,
+    old_hash:String,
+    new_hash:String,
     old_size:u64,
     new_size:u64,
     old_modified:u64,
-    new_modified:u64
+    new_modified:u64,
+    alert_type: AlertType,
+    severity: Severity
 ) {
-    println!("Integrity Changed: {}",path.display());
-    println!("OLD Hash: {}",old_hash);
-    println!("NEW Hash: {}",new_hash);
-    if old_size != new_size {
-        println!(
-            "Size Changed: {} -> {}",
-            old_size,
-            new_size
-        );
-    }
+    let alert = Alert {
+        timestamp:SystemTime::now(),
+        alert_type,
+        severity,
+        path,
+        old_size:Some(old_size),
+        new_size:Some(new_size),
+        old_hash:Some(old_hash),
+        new_hash:Some(new_hash),
+    };
 
-    if old_modified != new_modified {
-        println!(
-            "Modified Changed: {} -> {}",
-            old_modified,
-            new_modified
-        );
-    }
+    print_alert(&alert);
+    let _ = old_modified;
+    let _ = new_modified;
 }
 
 

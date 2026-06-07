@@ -3,3 +3,4 @@ mod display_event;
 mod models;
 pub mod baseline_builder;
 mod baseline_store;
+mod alert;
