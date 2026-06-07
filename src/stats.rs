@@ -60,5 +60,3 @@ pub fn generate_stats<'a>(scan_result: &'a mut ScanResult,top:usize,metrics:&'a 
         performance_metrics:metrics
     }
 }
-
-

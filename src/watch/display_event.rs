@@ -117,4 +117,4 @@ fn should_ignore(path: &Path) -> bool {
     path.file_name()
         .map(|name| name.to_string_lossy().ends_with('~'))
         .unwrap_or(false)
-}// test
+}
