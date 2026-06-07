@@ -17,9 +17,6 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                 match hash_file(path) {
                     Ok(hash) => {
                         baseline.insert(path.clone(),hash.to_string());
-                        if let Err(_e) = update_baseline_file(&baseline) {
-                            println!("Baseline state update failed");
-                        }
                     }
                     Err(e) => {
                         eprintln!(
@@ -29,6 +26,9 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                         );
                     }
                 }
+            }
+            if let Err(_e) = update_baseline_file(&baseline) {
+                println!("Baseline state update failed");
             }
         },
         EventKind::Create(CreateKind::Folder) => {
@@ -51,11 +51,8 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                             }
                             baseline.insert(
                                 path.clone(),
-                                new_hash.to_string()
+                                new_hash
                             );
-                            if let Err(_e) = update_baseline_file(&baseline) {
-                                println!("Baseline state update failed");
-                            }
                         }
                         Err(err) => {
                             eprintln!(
@@ -67,14 +64,18 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                     }
                 }
             }
+
+            if let Err(_e) = update_baseline_file(&baseline) {
+                println!("Baseline state update failed");
+            }
         },
 
         EventKind::Remove(_) => {
             for path in &event.paths {
                 let _res = baseline.remove(path);
-                if let Err(_e) = update_baseline_file(&baseline) {
-                    println!("Baseline state update failed");
-                }
+            }
+            if let Err(_e) = update_baseline_file(&baseline) {
+                println!("Baseline state update failed");
             }
             display(&event.paths,EventTypes::REMOVE,base_path);
         },
