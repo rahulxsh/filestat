@@ -14,14 +14,14 @@ Whether you're analyzing storage usage, identifying duplicate files, benchmarkin
 
 ## ✨ Key Highlights
 
-✅ Lightning-fast recursive scanning
-✅ Parallel duplicate detection using Rayon
-✅ BLAKE3 cryptographic hashing
-✅ Real-time filesystem monitoring
-✅ Persistent integrity baselines
-✅ JSON & CSV reporting
-✅ Security-focused architecture
-✅ Built entirely in Rust
+- Recursive filesystem scanning
+- Extension, size, and ignore-based filtering
+- JSON and CSV export support
+- BLAKE3-based duplicate detection
+- Parallel hashing with Rayon
+- Real-time filesystem monitoring
+- Persistent integrity baselines
+- File Integrity Monitoring (FIM) foundation
 
 ---
 
