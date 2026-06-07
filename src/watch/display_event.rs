@@ -63,7 +63,11 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut BaseLineFile) {
                             };
                             if &old_hash.hash != &new_hash {
                                 if let Ok(relative_path) = path.strip_prefix(base_path) {
-                                    display_integrity(relative_path,&old_hash.hash, &new_hash);
+                                    display_integrity(
+                                        relative_path,&old_hash.hash, &new_hash,
+                                        old_hash.size , size,
+                                        old_hash.modified, modified
+                                    );
                                 }
                             }
                             baseline.insert(
@@ -127,10 +131,33 @@ impl Display for EventTypes {
     }
 }
 
-fn display_integrity(path:&Path,old_hash:&str,new_hash:&str) {
+fn display_integrity(
+    path:&Path,
+    old_hash:&str,
+    new_hash:&str,
+    old_size:u64,
+    new_size:u64,
+    old_modified:u64,
+    new_modified:u64
+) {
     println!("Integrity Changed: {}",path.display());
     println!("OLD Hash: {}",old_hash);
     println!("NEW Hash: {}",new_hash);
+    if old_size != new_size {
+        println!(
+            "Size Changed: {} -> {}",
+            old_size,
+            new_size
+        );
+    }
+
+    if old_modified != new_modified {
+        println!(
+            "Modified Changed: {} -> {}",
+            old_modified,
+            new_modified
+        );
+    }
 }
 
 
