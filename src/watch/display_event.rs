@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use notify::event::{CreateKind, ModifyKind};
 use notify::{Event, EventKind};
 use crate::hashing::hash_file::hash_file;
+use crate::watch::baseline_store::update_baseline_file;
 use crate::watch::models::{Baseline, EventTypes};
 
 pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
@@ -15,7 +16,10 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                 }
                 match hash_file(path) {
                     Ok(hash) => {
-                        baseline.insert(path.clone(),hash.to_string())
+                        baseline.insert(path.clone(),hash.to_string());
+                        if let Err(_e) = update_baseline_file(&baseline) {
+                            println!("Baseline state update failed");
+                        }
                     }
                     Err(e) => {
                         eprintln!(
@@ -40,7 +44,7 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                     match hash_file(path) {
                         Ok(new_hash) => {
                             let new_hash = new_hash.to_string();
-                            if old_hash != &new_hash.to_string() {
+                            if old_hash != &new_hash {
                                 if let Ok(relative_path) = path.strip_prefix(base_path) {
                                     display_integrity(relative_path,old_hash, &new_hash);
                                 }
@@ -49,6 +53,9 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                                 path.clone(),
                                 new_hash.to_string()
                             );
+                            if let Err(_e) = update_baseline_file(&baseline) {
+                                println!("Baseline state update failed");
+                            }
                         }
                         Err(err) => {
                             eprintln!(
@@ -61,9 +68,13 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                 }
             }
         },
+
         EventKind::Remove(_) => {
             for path in &event.paths {
                 let _res = baseline.remove(path);
+                if let Err(_e) = update_baseline_file(&baseline) {
+                    println!("Baseline state update failed");
+                }
             }
             display(&event.paths,EventTypes::REMOVE,base_path);
         },

@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 use crate::models::FilterConfig;
 use crate::scanner::scan;
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
 use crate::hashing::hash_file::hash_file;
 
 pub enum EventTypes{
@@ -11,7 +12,7 @@ pub enum EventTypes{
     REMOVE
 }
 
-
+#[derive(Debug,Serialize,Deserialize)]
 pub struct Baseline {
     pub hashes:HashMap<PathBuf,String>
 }
