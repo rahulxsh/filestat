@@ -6,7 +6,6 @@ use crate::watch::baseline_store::{create_baseline_file, load_baseline_file};
 use crate::watch::display_event::display_event;
 
 pub fn watch_start(path:&PathBuf) -> Result<()> {
-    println!("Building baseline for integrity.....");
     let mut baseline = if let Some(base_line) = load_baseline_file() {
         println!("Loaded existing baseline");
         base_line
