@@ -1,12 +1,14 @@
 use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
+use std::time::UNIX_EPOCH;
 use notify::event::{CreateKind, ModifyKind};
 use notify::{Event, EventKind};
 use crate::hashing::hash_file::hash_file;
 use crate::watch::baseline_store::update_baseline_file;
-use crate::watch::models::{Baseline, EventTypes};
+use crate::watch::models::{BaseLineFile, BaselineFileInfo, EventTypes};
+use anyhow::Result;
 
-pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
+pub fn display_event(event:&Event,base_path:&Path,baseline:&mut BaseLineFile) {
     match event.kind {
         EventKind::Create(CreateKind::File) => {
             display(&event.paths,EventTypes::CREATE,base_path);
@@ -16,7 +18,17 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                 }
                 match hash_file(path) {
                     Ok(hash) => {
-                        baseline.insert(path.clone(),hash.to_string());
+                        let (size,modified)  = if let Ok(file_info) = get_fileinfo(&path) {
+                            file_info
+                        }else {
+                            continue;
+                        };
+                        let size =
+                        baseline.insert(path.clone(),BaselineFileInfo{
+                            size,
+                            hash:hash.to_string(),
+                            modified
+                        });
                     }
                     Err(e) => {
                         eprintln!(
@@ -44,14 +56,23 @@ pub fn display_event(event:&Event,base_path:&Path,baseline:&mut Baseline) {
                     match hash_file(path) {
                         Ok(new_hash) => {
                             let new_hash = new_hash.to_string();
-                            if old_hash != &new_hash {
+                            let (size,modified)  = if let Ok(file_info) = get_fileinfo(&path) {
+                                file_info
+                            } else {
+                                continue;
+                            };
+                            if &old_hash.hash != &new_hash {
                                 if let Ok(relative_path) = path.strip_prefix(base_path) {
-                                    display_integrity(relative_path,old_hash, &new_hash);
+                                    display_integrity(relative_path,&old_hash.hash, &new_hash);
                                 }
                             }
                             baseline.insert(
                                 path.clone(),
-                                new_hash
+                                BaselineFileInfo {
+                                    size,
+                                    hash:new_hash,
+                                    modified
+                                }
                             );
                         }
                         Err(err) => {
@@ -117,4 +138,17 @@ fn should_ignore(path: &Path) -> bool {
     path.file_name()
         .map(|name| name.to_string_lossy().ends_with('~'))
         .unwrap_or(false)
+}
+
+
+fn get_fileinfo(path:&Path) -> Result<(u64,u64)> {
+    let metadata = std::fs::metadata(path)?;
+
+    let size = metadata.len();
+    let modified_time = metadata
+        .modified()?
+        .duration_since(UNIX_EPOCH)?
+        .as_secs();
+
+    Ok((size,modified_time))
 }

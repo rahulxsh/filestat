@@ -1,12 +1,12 @@
 use std::path::{Path};
 use std::fs;
-use crate::watch::models::{Baseline};
+use crate::watch::models::{BaseLineFile, Baseline, BaselineFileInfo};
 use anyhow::{Result as Res};
 use serde_json::Result;
 
 pub const BASELINE_FILE: &str = ".filestat-baseline.json";
 
-pub fn create_baseline_file(content:&Baseline) {
+pub fn create_baseline_file(content:&BaseLineFile) {
     let path = Path::new(BASELINE_FILE);
     if let Ok(json_string) =  serde_json::to_string(&content) {
         let file_res = fs::write(path,json_string);
@@ -17,9 +17,9 @@ pub fn create_baseline_file(content:&Baseline) {
     }
 }
 
-pub fn load_baseline_file() -> Option<Baseline> {
+pub fn load_baseline_file() -> Option<BaseLineFile> {
     if let Ok(file_content) = fs::read_to_string(BASELINE_FILE) {
-        let baseline:Result<Baseline> = serde_json::from_str(&file_content);
+        let baseline:Result<BaseLineFile> = serde_json::from_str(&file_content);
         match baseline {
             Ok(baseline) => {
                 return  Some(baseline)
@@ -33,7 +33,7 @@ pub fn load_baseline_file() -> Option<Baseline> {
     None
 }
 
-pub fn update_baseline_file(baseline:&Baseline) -> Res<()> {
+pub fn update_baseline_file(baseline:&BaseLineFile) -> Res<()> {
     if let Ok(json_string) = serde_json::to_string_pretty(&baseline) {
     fs::write(BASELINE_FILE,json_string)?;
     } else {
