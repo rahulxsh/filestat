@@ -27,7 +27,7 @@ pub fn print_alert(alert: &Alert) {
     println!();
     println!("[{}]", alert.severity);
     println!("{}", alert.alert_type);
-    println!("File: {}", alert.path.display());
+    println!("Path: {}", alert.path.display());
 
     if let Some(old_hash) = &alert.old_hash {
         println!("Old Hash: {}", old_hash);

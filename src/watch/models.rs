@@ -62,9 +62,9 @@ impl BaseLineFile {
         self.hashes.insert(path,file_info);
     }
 
-    pub fn remove(&mut self, path:&Path) -> Result<()> {
-        self.hashes.remove(path);
-        Ok(())
+    pub fn remove(&mut self, path:&Path) -> Option<BaselineFileInfo> {
+        let entry = self.hashes.remove(path);
+        entry
     }
 }
 

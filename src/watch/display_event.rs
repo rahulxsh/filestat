@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
-use notify::event::{CreateKind, ModifyKind};
+use notify::event::{CreateKind, ModifyKind, RemoveKind};
 use notify::{Event, EventKind};
 use crate::hashing::hash_file::hash_file;
 use crate::watch::baseline_store::update_baseline_file;
@@ -12,7 +12,7 @@ use crate::watch::alert::print_alert;
 pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) {
     match event.kind {
         EventKind::Create(CreateKind::File) => {
-            display(&event.paths,EventTypes::CREATE,base_path);
+            // display(&event.paths,EventTypes::CREATE,base_path);
             for path in &event.paths {
                 if should_ignore(path) {
                     continue;
@@ -24,7 +24,20 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                         }else {
                             continue;
                         };
-                        let size =
+
+                        if let Ok(relative_path) = path.strip_prefix(base_path) {
+                            display_integrity(
+                                relative_path.to_path_buf(),
+                                None,
+                                Some(hash.to_string().clone()),
+                                None,
+                                Some(size),
+                                None,
+                                Some(modified),
+                                AlertType::FileCreated,
+                                Severity::Medium
+                            );
+                        }
                         baseline.insert(path.clone(),BaselineFileInfo{
                             size,
                             hash:hash.to_string(),
@@ -45,10 +58,25 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
             }
         },
         EventKind::Create(CreateKind::Folder) => {
-            display(&event.paths,EventTypes::CREATE,base_path);
+            // display(&event.paths,EventTypes::CREATE,base_path);
+            for path in &event.paths {
+               if  let Ok(relative_path) = path.strip_prefix(base_path) {
+                   display_integrity(
+                       relative_path.to_path_buf(),
+                       None,
+                       None,
+                       None,
+                       None,
+                       None,
+                       None,
+                       AlertType::DirectoryCreated,
+                       Severity::Low
+                   )
+               }
+            }
         },
         EventKind::Modify(ModifyKind::Data(_)) => {
-            display(&event.paths,EventTypes::MODIFY,base_path);
+            // display(&event.paths,EventTypes::MODIFY,base_path);
             for path in &event.paths {
                 if should_ignore(path) {
                     continue;
@@ -66,12 +94,12 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                                 if let Ok(relative_path) = path.strip_prefix(base_path) {
                                     display_integrity(
                                         relative_path.to_path_buf(),
-                                        old_hash.hash.clone(),
-                                        new_hash.clone(),
-                                        old_hash.size,
-                                        size,
-                                        old_hash.modified,
-                                        modified,
+                                        Some(old_hash.hash.clone()),
+                                        Some(new_hash.clone()),
+                                        Some(old_hash.size),
+                                        Some(size),
+                                        Some(old_hash.modified),
+                                        Some(modified),
                                         AlertType::HashChanged,
                                         Severity::High
                                     );
@@ -102,19 +130,55 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
             }
         },
 
-        EventKind::Remove(_) => {
+        EventKind::Remove(RemoveKind::File) => {
             for path in &event.paths {
-                let _res = baseline.remove(path);
+               if let Some(res) = baseline.remove(path) {
+                  if let Ok(relative_path) = path.strip_prefix(base_path) {
+                      display_integrity(
+                          relative_path.to_path_buf(),
+                          Some(res.hash),
+                          None,
+                          Some(res.size),
+                          None,Some(res.modified),None,
+                          AlertType::FileDeleted,
+                          Severity::High
+                      )
+                  }
+                }
             }
             if let Err(_e) = update_baseline_file(&baseline) {
                 println!("Baseline state update failed");
             }
-            display(&event.paths,EventTypes::REMOVE,base_path);
+            // display(&event.paths,EventTypes::REMOVE,base_path);
+        },
+        EventKind::Remove(RemoveKind::Folder) => {
+            for path in &event.paths {
+
+                let _ = baseline.remove(path);
+
+                if let Ok(relative_path) = path.strip_prefix(base_path) {
+                    display_integrity(
+                        relative_path.to_path_buf(),
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        AlertType::DirectoryDeleted,
+                        Severity::Medium,
+                    );
+                }
+            }
+
+            let _ = update_baseline_file(baseline);
+            // display(&event.paths,EventTypes::REMOVE,base_path);
         },
         _ => {}
     }
 }
 
+#[allow(unused)]
 fn display(paths:&[PathBuf],event_types: EventTypes,basepath:&Path) {
     for path in paths {
         if let Some(name) = path.file_name() {
@@ -140,12 +204,12 @@ impl Display for EventTypes {
 
 fn display_integrity(
     path:PathBuf,
-    old_hash:String,
-    new_hash:String,
-    old_size:u64,
-    new_size:u64,
-    old_modified:u64,
-    new_modified:u64,
+    old_hash:Option<String>,
+    new_hash:Option<String>,
+    old_size:Option<u64>,
+    new_size:Option<u64>,
+    old_modified:Option<u64>,
+    new_modified:Option<u64>,
     alert_type: AlertType,
     severity: Severity
 ) {
@@ -154,10 +218,10 @@ fn display_integrity(
         alert_type,
         severity,
         path,
-        old_size:Some(old_size),
-        new_size:Some(new_size),
-        old_hash:Some(old_hash),
-        new_hash:Some(new_hash),
+        old_size,
+        new_size,
+        old_hash,
+        new_hash,
     };
 
     print_alert(&alert);
