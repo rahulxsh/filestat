@@ -8,6 +8,7 @@ pub struct CriticalPaths {
 
 pub fn get_critical_paths() -> CriticalPaths {
     let critical_paths = CriticalPaths {
+        //TODO: Replace this with actual config file
         paths: vec![
             PathBuf::from("./src/watch"),
             PathBuf::from("./src/config"),
