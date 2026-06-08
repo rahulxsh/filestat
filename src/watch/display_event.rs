@@ -8,8 +8,9 @@ use crate::watch::baseline_store::update_baseline_file;
 use crate::watch::models::{Alert, AlertType, BaseLineFile, BaselineFileInfo, EventTypes, Severity};
 use anyhow::Result;
 use crate::watch::alert::print_alert;
+use crate::watch::critical_path::{get_severity_level, is_critical_path, CriticalPaths};
 
-pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) {
+pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,critical_paths: &CriticalPaths) {
     match event.kind {
         EventKind::Create(CreateKind::File) => {
             // display(&event.paths,EventTypes::CREATE,base_path);
@@ -19,13 +20,14 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                 }
                 match hash_file(path) {
                     Ok(hash) => {
-                        let (size,modified)  = if let Ok(file_info) = get_fileinfo(&path) {
+                        let (size, modified) = if let Ok(file_info) = get_fileinfo(&path) {
                             file_info
-                        }else {
+                        } else {
                             continue;
                         };
 
                         if let Ok(relative_path) = path.strip_prefix(base_path) {
+                            let severity: Severity = get_severity_level(path, Severity::Medium, critical_paths);
                             display_integrity(
                                 relative_path.to_path_buf(),
                                 None,
@@ -35,12 +37,12 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                                 None,
                                 Some(modified),
                                 AlertType::FileCreated,
-                                Severity::Medium
+                                severity
                             );
                         }
-                        baseline.insert(path.clone(),BaselineFileInfo{
+                        baseline.insert(path.clone(), BaselineFileInfo {
                             size,
-                            hash:hash.to_string(),
+                            hash: hash.to_string(),
                             modified
                         });
                     }
@@ -60,19 +62,20 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
         EventKind::Create(CreateKind::Folder) => {
             // display(&event.paths,EventTypes::CREATE,base_path);
             for path in &event.paths {
-               if  let Ok(relative_path) = path.strip_prefix(base_path) {
-                   display_integrity(
-                       relative_path.to_path_buf(),
-                       None,
-                       None,
-                       None,
-                       None,
-                       None,
-                       None,
-                       AlertType::DirectoryCreated,
-                       Severity::Low
-                   )
-               }
+                if let Ok(relative_path) = path.strip_prefix(base_path) {
+                    let severity = get_severity_level(path, Severity::Low, critical_paths);
+                    display_integrity(
+                        relative_path.to_path_buf(),
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        None,
+                        AlertType::DirectoryCreated,
+                        severity
+                    )
+                }
             }
         },
         EventKind::Modify(ModifyKind::Data(_)) => {
@@ -85,13 +88,14 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                     match hash_file(path) {
                         Ok(new_hash) => {
                             let new_hash = new_hash.to_string();
-                            let (size,modified)  = if let Ok(file_info) = get_fileinfo(&path) {
+                            let (size, modified) = if let Ok(file_info) = get_fileinfo(&path) {
                                 file_info
                             } else {
                                 continue;
                             };
                             if &old_hash.hash != &new_hash {
                                 if let Ok(relative_path) = path.strip_prefix(base_path) {
+                                    let severity = get_severity_level(path, Severity::High, critical_paths);
                                     display_integrity(
                                         relative_path.to_path_buf(),
                                         Some(old_hash.hash.clone()),
@@ -101,7 +105,7 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                                         Some(old_hash.modified),
                                         Some(modified),
                                         AlertType::HashChanged,
-                                        Severity::High
+                                        severity
                                     );
                                 }
                             }
@@ -109,7 +113,7 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                                 path.clone(),
                                 BaselineFileInfo {
                                     size,
-                                    hash:new_hash,
+                                    hash: new_hash,
                                     modified
                                 }
                             );
@@ -132,18 +136,19 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
 
         EventKind::Remove(RemoveKind::File) => {
             for path in &event.paths {
-               if let Some(res) = baseline.remove(path) {
-                  if let Ok(relative_path) = path.strip_prefix(base_path) {
-                      display_integrity(
-                          relative_path.to_path_buf(),
-                          Some(res.hash),
-                          None,
-                          Some(res.size),
-                          None,Some(res.modified),None,
-                          AlertType::FileDeleted,
-                          Severity::High
-                      )
-                  }
+                if let Some(res) = baseline.remove(path) {
+                    if let Ok(relative_path) = path.strip_prefix(base_path) {
+                        let severity = get_severity_level(path, Severity::High, critical_paths);
+                        display_integrity(
+                            relative_path.to_path_buf(),
+                            Some(res.hash),
+                            None,
+                            Some(res.size),
+                            None, Some(res.modified), None,
+                            AlertType::FileDeleted,
+                            severity
+                        )
+                    }
                 }
             }
             if let Err(_e) = update_baseline_file(&baseline) {
@@ -153,10 +158,10 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
         },
         EventKind::Remove(RemoveKind::Folder) => {
             for path in &event.paths {
-
                 let _ = baseline.remove(path);
 
                 if let Ok(relative_path) = path.strip_prefix(base_path) {
+                    let severity = get_severity_level(path, Severity::Medium, critical_paths);
                     display_integrity(
                         relative_path.to_path_buf(),
                         None,
@@ -166,7 +171,7 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile) 
                         None,
                         None,
                         AlertType::DirectoryDeleted,
-                        Severity::Medium,
+                        severity,
                     );
                 }
             }

@@ -1,8 +1,10 @@
 use notify::{Event,Result,RecursiveMode,Watcher};
 use std::sync::mpsc;
 use std::path::{PathBuf};
+use anyhow::bail;
 use crate::watch::baseline_builder::build;
 use crate::watch::baseline_store::{create_baseline_file, load_baseline_file};
+use crate::watch::critical_path::get_critical_paths;
 use crate::watch::display_event::display_event;
 
 pub fn watch_start(path:&PathBuf) -> Result<()> {
@@ -22,6 +24,7 @@ pub fn watch_start(path:&PathBuf) -> Result<()> {
 
     let (tx,rx) = mpsc::channel::<Result<Event>>();
     let basepath = path.canonicalize()?;
+    let critical_paths = get_critical_paths();
 
     let mut watcher = notify::recommended_watcher(tx)?;
 
@@ -32,7 +35,7 @@ pub fn watch_start(path:&PathBuf) -> Result<()> {
     for res  in rx {
         match res {
             Ok(event) =>{
-                display_event(&event,&basepath,&mut baseline);
+                display_event(&event,&basepath,&mut baseline,&critical_paths);
             },
             Err(e) => println!("Watch error:{}",e),
         }

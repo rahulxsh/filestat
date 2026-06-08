@@ -4,3 +4,4 @@ mod models;
 pub mod baseline_builder;
 mod baseline_store;
 mod alert;
+mod critical_path;
