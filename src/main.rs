@@ -9,6 +9,7 @@ mod utils;
 mod hashing;
 mod watch;
 mod snapshot;
+mod config;
 
 use std::collections::HashMap;
 use std::fs;
@@ -23,10 +24,12 @@ use crate::hashing::get_duplicates::{get_full_duplicates};
 use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
 use std::time::{Instant};
+use crate::config::toml_parser::parse_config_file;
 use crate::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapshot_diff};
 use crate::watch::watch::watch_start;
 
 fn main() -> Result<()> {
+    // config::toml_parser::parse_config_file();
     let cli = Cli::parse();
 
     match cli.command {
@@ -144,16 +147,25 @@ fn main() -> Result<()> {
         }
 
         Commands::Watch {
-            path
+            path,
+            config
         } => {
             if path.exists() {
-                watch_start(&path)?;
+                if path == Path::new("/").to_path_buf() {
+                    bail!("Given path is root that can take a lot of time in baseline creation and also have issues with permissions")
+                }
+                let p = Path::new(&config);
+                if !p.exists() {
+                    bail!("Give config file not found check the path again")
+                }
+                let config_data = parse_config_file(config)?;
+                watch_start(&path,&config_data)?;
             } else {
                 println!("Given Path doesn't exist");
             }
         }
 
-        Commands::Snapshot {command,show_paths} => {
+        Commands::Snapshot {command,show_paths,config} => {
             fs::create_dir_all(".snapshots")?;
             match command {
                 SnapshotCommands::Save  => {

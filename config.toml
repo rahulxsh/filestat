@@ -1,0 +1,7 @@
+critical_paths = [
+    "/Users/rahulsharma/.ssh"
+]
+
+snapshot_paths = [
+    "/.ssh"
+]

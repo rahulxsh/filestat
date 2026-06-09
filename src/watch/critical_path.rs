@@ -6,14 +6,10 @@ pub struct CriticalPaths {
     pub paths: Vec<PathBuf>,
 }
 
-pub fn get_critical_paths() -> CriticalPaths {
+pub fn get_critical_paths(paths:Vec<PathBuf>) -> CriticalPaths {
     let critical_paths = CriticalPaths {
         //TODO: Replace this with actual config file
-        paths: vec![
-            PathBuf::from("./src/watch"),
-            PathBuf::from("./src/config"),
-            PathBuf::from("./src/secrets"),
-        ],
+        paths
     };
 
     let mut canonical_paths = CriticalPaths {

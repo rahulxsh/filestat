@@ -56,13 +56,19 @@ pub enum Commands {
     },
     Watch {
         path:PathBuf,
+
+        #[arg(long)]
+        config:String,
     },
     Snapshot {
         #[command(subcommand)]
         command:SnapshotCommands,
 
+        #[arg(long)]
+        config:String,
+
         #[arg(long, default_value_t = false )]
-        show_paths:bool
+        show_paths:bool,
     }
 }
 
