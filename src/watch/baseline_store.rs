@@ -1,6 +1,6 @@
 use std::path::{Path};
 use std::fs;
-use crate::watch::models::{BaseLineFile, Baseline, BaselineFileInfo};
+use crate::watch::models::{BaseLineFile};
 use anyhow::{Result as Res};
 use serde_json::Result;
 
@@ -17,8 +17,8 @@ pub fn create_baseline_file(content:&BaseLineFile,file_path:&str) {
     }
 }
 
-pub fn load_baseline_file() -> Option<BaseLineFile> {
-    if let Ok(file_content) = fs::read_to_string(BASELINE_FILE) {
+pub fn load_baseline_file(path:&str) -> Option<BaseLineFile> {
+    if let Ok(file_content) = fs::read_to_string(path) {
         let baseline:Result<BaseLineFile> = serde_json::from_str(&file_content);
         match baseline {
             Ok(baseline) => {

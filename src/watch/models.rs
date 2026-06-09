@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::fmt::{write, Display, Formatter};
+use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use crate::models::FilterConfig;
@@ -8,6 +8,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use crate::hashing::hash_file::hash_file;
 
+#[allow(unused)]
 pub enum EventTypes{
     CREATE,
     MODIFY,
@@ -15,6 +16,7 @@ pub enum EventTypes{
 }
 
 #[derive(Debug,Serialize,Deserialize)]
+#[allow(unused)]
 pub struct Baseline {
     pub hashes:HashMap<PathBuf,String>
 }
@@ -80,6 +82,7 @@ pub struct BaselineFileInfo {
 }
 
 #[derive(Debug)]
+#[allow(unused)]
 pub enum AlertType {
     FileCreated,
     FileDeleted,
@@ -102,6 +105,7 @@ pub enum Severity {
 }
 
 #[derive(Debug)]
+#[allow(unused)]
 pub struct Alert {
     pub timestamp: SystemTime,
     pub alert_type: AlertType,

@@ -1,1 +1,1 @@
-pub mod save_snapshot;
+pub mod snapshot;

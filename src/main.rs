@@ -23,7 +23,7 @@ use crate::hashing::get_duplicates::{get_full_duplicates};
 use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
 use std::time::{Instant};
-use crate::snapshot::save_snapshot::save_snapshot;
+use crate::snapshot::snapshot::{save_snapshot, snapshot_diff};
 use crate::watch::watch::watch_start;
 
 fn main() -> Result<()> {
@@ -162,6 +162,8 @@ fn main() -> Result<()> {
                 }
 
                 SnapshotCommands::Diff  => {
+                    let path = "./.snapshots/snapshot.json";
+                    let _ = snapshot_diff(path);
                     println!("Diff snapshot");
                 }
             }

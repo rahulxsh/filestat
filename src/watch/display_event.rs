@@ -8,7 +8,7 @@ use crate::watch::baseline_store::update_baseline_file;
 use crate::watch::models::{Alert, AlertType, BaseLineFile, BaselineFileInfo, EventTypes, Severity};
 use anyhow::Result;
 use crate::watch::alert::print_alert;
-use crate::watch::critical_path::{get_severity_level, is_critical_path, CriticalPaths};
+use crate::watch::critical_path::{get_severity_level, CriticalPaths};
 
 pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,critical_paths: &CriticalPaths) {
     match event.kind {

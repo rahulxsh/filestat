@@ -1,14 +1,13 @@
 use notify::{Event,Result,RecursiveMode,Watcher};
 use std::sync::mpsc;
 use std::path::{PathBuf};
-use anyhow::bail;
 use crate::watch::baseline_builder::build;
 use crate::watch::baseline_store::{create_baseline_file, load_baseline_file, BASELINE_FILE};
 use crate::watch::critical_path::get_critical_paths;
 use crate::watch::display_event::display_event;
 
 pub fn watch_start(path:&PathBuf) -> Result<()> {
-    let mut baseline = if let Some(base_line) = load_baseline_file() {
+    let mut baseline = if let Some(base_line) = load_baseline_file(BASELINE_FILE) {
         println!("Loaded existing baseline.json");
         base_line
     }else {
