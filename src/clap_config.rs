@@ -59,7 +59,10 @@ pub enum Commands {
     },
     Snapshot {
         #[command(subcommand)]
-        command:SnapshotCommands
+        command:SnapshotCommands,
+
+        #[arg(long, default_value_t = false )]
+        show_paths:bool
     }
 }
 

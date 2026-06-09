@@ -76,30 +76,30 @@ Whether you're analyzing storage usage, identifying duplicate files, benchmarkin
 
 ## 📌 Feature Status
 
-| Feature               | Status  |
-| --------------------- |---------|
-| Recursive Scanning    | ✅       |
-| Statistics Engine     | ✅       |
-| Largest Files         | ✅       |
-| Extension Statistics  | ✅       |
-| Hidden File Filtering | ✅       |
-| Ignore Rules          | ✅       |
-| JSON Export           | ✅       |
-| CSV Export            | ✅       |
-| Extension Filters     | ✅       |
-| Size Filters          | ✅       |
-| Duplicate Detection   | ✅       |
-| Parallel Hashing      | ✅       |
-| Performance Metrics   | ✅       |
-| Real-Time Monitoring  | ✅       |
-| Baseline Hash Engine  | ✅       |
-| Persistent Baseline   | ✅       |
-| Metadata Integrity    | ✅       |
-| Alert System          | ✅       |
-| Critical Path Rules   | ✅       |
-| Snapshot Engine       | 🚧      |
-| SQLite Storage        | ⏳       |
-| Agent Mode            | ⏳       |
+| Feature               | Status |
+| --------------------- |--------|
+| Recursive Scanning    | ✅      |
+| Statistics Engine     | ✅      |
+| Largest Files         | ✅      |
+| Extension Statistics  | ✅      |
+| Hidden File Filtering | ✅      |
+| Ignore Rules          | ✅      |
+| JSON Export           | ✅      |
+| CSV Export            | ✅      |
+| Extension Filters     | ✅      |
+| Size Filters          | ✅      |
+| Duplicate Detection   | ✅      |
+| Parallel Hashing      | ✅      |
+| Performance Metrics   | ✅      |
+| Real-Time Monitoring  | ✅      |
+| Baseline Hash Engine  | ✅      |
+| Persistent Baseline   | ✅      |
+| Metadata Integrity    | ✅      |
+| Alert System          | ✅      |
+| Critical Path Rules   | ✅      |
+| Snapshot Engine       | ✅      |
+| SQLite Storage        | 🚧     |
+| Agent Mode            | ⏳      |
 
 ---
 
@@ -254,6 +254,24 @@ Monitor a directory for integrity changes:
 filestat watch ~/Projects
 ```
 
+Save current selected path files snapshot
+
+```bash
+filestat snapshot save
+```
+
+Diff. current selected path files snapshot
+
+```bash
+filestat snapshot diff
+```
+
+Snapshot diff to show changed file path
+
+```bash
+filestat snapshot --show-paths diff
+```
+
 ---
 
 ## ⚡ Performance
@@ -331,12 +349,12 @@ Planned alert metadata:
 * Critical path rules
 * Sensitive file monitoring
 
-### 🚧 Next Stage
-
 ### Stage 8 — Snapshot Engine
 
 * Filesystem state snapshots
 * Historical comparison
+
+### 🚧 Next Stage
 
 ### Stage 9 — Persistence Layer
 

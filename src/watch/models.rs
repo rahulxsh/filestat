@@ -111,7 +111,7 @@ pub struct Alert {
     pub alert_type: AlertType,
     pub severity: Severity,
     pub path: PathBuf,
-
+    
     pub old_hash: Option<String>,
     pub new_hash: Option<String>,
 

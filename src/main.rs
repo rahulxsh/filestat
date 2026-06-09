@@ -23,7 +23,7 @@ use crate::hashing::get_duplicates::{get_full_duplicates};
 use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
 use std::time::{Instant};
-use crate::snapshot::snapshot::{save_snapshot, snapshot_diff};
+use crate::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapshot_diff};
 use crate::watch::watch::watch_start;
 
 fn main() -> Result<()> {
@@ -153,7 +153,7 @@ fn main() -> Result<()> {
             }
         }
 
-        Commands::Snapshot {command} => {
+        Commands::Snapshot {command,show_paths} => {
             fs::create_dir_all(".snapshots")?;
             match command {
                 SnapshotCommands::Save  => {
@@ -163,8 +163,10 @@ fn main() -> Result<()> {
 
                 SnapshotCommands::Diff  => {
                     let path = "./.snapshots/snapshot.json";
-                    let _ = snapshot_diff(path);
-                    println!("Diff snapshot");
+                    let diff = snapshot_diff(path)?;
+                    if show_paths {
+                        print_snap_shot_diff_files(&diff)
+                    }
                 }
             }
         }
