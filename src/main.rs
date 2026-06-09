@@ -8,11 +8,13 @@ mod filters;
 mod utils;
 mod hashing;
 mod watch;
+mod snapshot;
 
 use std::collections::HashMap;
+use std::fs;
 use clap::Parser;
 use std::path::{Path, PathBuf};
-use crate::clap_config::{Cli, Commands};
+use crate::clap_config::{Cli, Commands, SnapshotCommands};
 use crate::scanner::scan;
 use anyhow::{bail, Result};
 use crate::files::csv::export_csv;
@@ -21,6 +23,7 @@ use crate::hashing::get_duplicates::{get_full_duplicates};
 use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
 use std::time::{Instant};
+use crate::snapshot::save_snapshot::save_snapshot;
 use crate::watch::watch::watch_start;
 
 fn main() -> Result<()> {
@@ -147,6 +150,20 @@ fn main() -> Result<()> {
                 watch_start(&path)?;
             } else {
                 println!("Given Path doesn't exist");
+            }
+        }
+
+        Commands::Snapshot {command} => {
+            fs::create_dir_all(".snapshots")?;
+            match command {
+                SnapshotCommands::Save  => {
+                    let path = String::from("./.snapshots/snapshot.json");
+                    save_snapshot(&path);
+                }
+
+                SnapshotCommands::Diff  => {
+                    println!("Diff snapshot");
+                }
             }
         }
     }

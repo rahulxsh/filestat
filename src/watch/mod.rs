@@ -1,7 +1,7 @@
 pub mod watch;
 mod display_event;
-mod models;
+pub mod models;
 pub mod baseline_builder;
-mod baseline_store;
+pub mod baseline_store;
 mod alert;
 mod critical_path;

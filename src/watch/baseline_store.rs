@@ -6,8 +6,8 @@ use serde_json::Result;
 
 pub const BASELINE_FILE: &str = ".filestat-baseline.json";
 
-pub fn create_baseline_file(content:&BaseLineFile) {
-    let path = Path::new(BASELINE_FILE);
+pub fn create_baseline_file(content:&BaseLineFile,file_path:&str) {
+    let path = Path::new(file_path);
     if let Ok(json_string) =  serde_json::to_string(&content) {
         let file_res = fs::write(path,json_string);
         match file_res {
@@ -25,7 +25,7 @@ pub fn load_baseline_file() -> Option<BaseLineFile> {
                 return  Some(baseline)
             }
             Err(_e) =>{
-                println!("New baseline due to file load failure");
+                println!("New baseline.json due to file load failure");
                 return None
             }
         }

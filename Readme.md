@@ -76,30 +76,30 @@ Whether you're analyzing storage usage, identifying duplicate files, benchmarkin
 
 ## 📌 Feature Status
 
-| Feature               | Status |
-| --------------------- | ------ |
-| Recursive Scanning    | ✅      |
-| Statistics Engine     | ✅      |
-| Largest Files         | ✅      |
-| Extension Statistics  | ✅      |
-| Hidden File Filtering | ✅      |
-| Ignore Rules          | ✅      |
-| JSON Export           | ✅      |
-| CSV Export            | ✅      |
-| Extension Filters     | ✅      |
-| Size Filters          | ✅      |
-| Duplicate Detection   | ✅      |
-| Parallel Hashing      | ✅      |
-| Performance Metrics   | ✅      |
-| Real-Time Monitoring  | ✅      |
-| Baseline Hash Engine  | ✅      |
-| Persistent Baseline   | ✅      |
-| Metadata Integrity    | ✅      |
-| Alert System          | 🚧     |
-| Critical Path Rules   | ⏳      |
-| Snapshot Engine       | ⏳      |
-| SQLite Storage        | ⏳      |
-| Agent Mode            | ⏳      |
+| Feature               | Status  |
+| --------------------- |---------|
+| Recursive Scanning    | ✅       |
+| Statistics Engine     | ✅       |
+| Largest Files         | ✅       |
+| Extension Statistics  | ✅       |
+| Hidden File Filtering | ✅       |
+| Ignore Rules          | ✅       |
+| JSON Export           | ✅       |
+| CSV Export            | ✅       |
+| Extension Filters     | ✅       |
+| Size Filters          | ✅       |
+| Duplicate Detection   | ✅       |
+| Parallel Hashing      | ✅       |
+| Performance Metrics   | ✅       |
+| Real-Time Monitoring  | ✅       |
+| Baseline Hash Engine  | ✅       |
+| Persistent Baseline   | ✅       |
+| Metadata Integrity    | ✅       |
+| Alert System          | ✅       |
+| Critical Path Rules   | ✅       |
+| Snapshot Engine       | 🚧      |
+| SQLite Storage        | ⏳       |
+| Agent Mode            | ⏳       |
 
 ---
 
@@ -296,7 +296,6 @@ Hashes/sec: ~4,616
 * Persistent baseline storage
 * Metadata tracking
 
-### 🚧 Next Stage
 
 #### Alert System
 
@@ -331,6 +330,8 @@ Planned alert metadata:
 
 * Critical path rules
 * Sensitive file monitoring
+
+### 🚧 Next Stage
 
 ### Stage 8 — Snapshot Engine
 

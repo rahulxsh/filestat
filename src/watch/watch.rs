@@ -3,19 +3,19 @@ use std::sync::mpsc;
 use std::path::{PathBuf};
 use anyhow::bail;
 use crate::watch::baseline_builder::build;
-use crate::watch::baseline_store::{create_baseline_file, load_baseline_file};
+use crate::watch::baseline_store::{create_baseline_file, load_baseline_file, BASELINE_FILE};
 use crate::watch::critical_path::get_critical_paths;
 use crate::watch::display_event::display_event;
 
 pub fn watch_start(path:&PathBuf) -> Result<()> {
     let mut baseline = if let Some(base_line) = load_baseline_file() {
-        println!("Loaded existing baseline");
+        println!("Loaded existing baseline.json");
         base_line
     }else {
-        println!("Building baseline for integrity...");
+        println!("Building baseline.json for integrity...");
         let baseline = build(path).expect("Baseline build failed");
 
-        create_baseline_file(&baseline);
+        create_baseline_file(&baseline,BASELINE_FILE);
 
         println!("Baseline created");
         baseline

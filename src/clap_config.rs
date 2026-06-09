@@ -56,5 +56,15 @@ pub enum Commands {
     },
     Watch {
         path:PathBuf,
+    },
+    Snapshot {
+        #[command(subcommand)]
+        command:SnapshotCommands
     }
+}
+
+#[derive(Debug,Clone,Subcommand)]
+pub enum SnapshotCommands {
+    Save ,
+    Diff
 }
