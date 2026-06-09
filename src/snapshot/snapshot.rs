@@ -4,13 +4,11 @@ use crate::watch::baseline_builder::build;
 use crate::watch::baseline_store::{create_baseline_file, load_baseline_file};
 use crate::watch::models::BaseLineFile;
 use anyhow::{Context, Result};
+use crate::config::toml_parser::ConfigFile;
 use crate::snapshot::model::SnapshotDiff;
 
-pub fn get_snapshot_paths() -> Vec<PathBuf> {
-    let paths = vec![
-        PathBuf::from("./src/watch"),
-        PathBuf::from("./src/hashing"),
-    ];
+pub fn get_snapshot_paths(snap_paths:Vec<PathBuf>) -> Vec<PathBuf> {
+    let paths = snap_paths;
 
     let mut valid_paths = Vec::new();
 
@@ -22,8 +20,8 @@ pub fn get_snapshot_paths() -> Vec<PathBuf> {
 
     valid_paths
 }
-pub fn save_snapshot(filepath:&String){
-    let paths = get_snapshot_paths();
+pub fn save_snapshot(filepath:&String,paths:ConfigFile){
+    let paths = get_snapshot_paths(paths.snapshot_paths);
 
     let mut map = BaseLineFile {
         hashes:HashMap::new()
@@ -40,8 +38,8 @@ pub fn save_snapshot(filepath:&String){
    create_baseline_file(&map,filepath)
 }
 
-pub fn get_current_snapshot() -> Result<BaseLineFile>{
-    let paths = get_snapshot_paths();
+pub fn get_current_snapshot(snap_paths:ConfigFile) -> Result<BaseLineFile>{
+    let paths = get_snapshot_paths(snap_paths.snapshot_paths);
 
     let mut map = BaseLineFile {
         hashes:HashMap::new()
@@ -59,11 +57,11 @@ pub fn get_current_snapshot() -> Result<BaseLineFile>{
 }
 
 
-pub fn snapshot_diff(path:&str) -> Result<SnapshotDiff> {
+pub fn snapshot_diff(path:&str,snap_paths:ConfigFile) -> Result<SnapshotDiff> {
 
     let snapshot = load_baseline_file(path)
         .context("Unable to load old snapshot for diff")?;
-    let current_snapshot = get_current_snapshot()
+    let current_snapshot = get_current_snapshot(snap_paths)
         .context("Unable to create latest snapshot")?;
 
     let mut res = SnapshotDiff {

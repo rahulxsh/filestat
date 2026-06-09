@@ -167,15 +167,16 @@ fn main() -> Result<()> {
 
         Commands::Snapshot {command,show_paths,config} => {
             fs::create_dir_all(".snapshots")?;
+            let config_data = parse_config_file(config)?;
             match command {
                 SnapshotCommands::Save  => {
                     let path = String::from("./.snapshots/snapshot.json");
-                    save_snapshot(&path);
+                    save_snapshot(&path,config_data);
                 }
 
                 SnapshotCommands::Diff  => {
                     let path = "./.snapshots/snapshot.json";
-                    let diff = snapshot_diff(path)?;
+                    let diff = snapshot_diff(path,config_data)?;
                     if show_paths {
                         print_snap_shot_diff_files(&diff)
                     }
