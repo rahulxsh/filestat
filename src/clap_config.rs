@@ -55,8 +55,6 @@ pub enum Commands {
         duplicate:bool
     },
     Watch {
-        path:PathBuf,
-
         #[arg(long)]
         config:String,
     },

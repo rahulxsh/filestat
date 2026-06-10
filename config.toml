@@ -1,3 +1,8 @@
+monitor_paths = [
+    "/Users/rahulsharma/.ssh",
+    "/Users/rahulsharma/.config"
+]
+
 critical_paths = [
     "/Users/rahulsharma/.ssh"
 ]

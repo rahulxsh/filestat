@@ -9,8 +9,19 @@ pub fn parse_config_file(path:String) -> Result<ConfigFile> {
 
     let mut config_paths = ConfigFile {
         critical_paths:vec![],
-        snapshot_paths:vec![]
+        snapshot_paths:vec![],
+        monitor_paths:vec![]
     };
+
+    for monitor_path in config.monitor_paths {
+        let path = Path::new(&monitor_path);
+        if path.exists() {
+            config_paths.monitor_paths.push(path.to_path_buf())
+        }else {
+            println!("⚠️ --config file path doesn't exist make sure to check the absolute path");
+            println!("PATH:{}",path.display());
+        }
+    }
 
     for critical in config.critical_paths {
         let path = Path::new(&critical);
@@ -38,5 +49,6 @@ pub fn parse_config_file(path:String) -> Result<ConfigFile> {
 #[derive(Serialize,Deserialize,Debug,Default)]
 pub struct ConfigFile {
     pub critical_paths:Vec<PathBuf>,
-    pub snapshot_paths:Vec<PathBuf>
+    pub snapshot_paths:Vec<PathBuf>,
+    pub monitor_paths:Vec<PathBuf>
 }

@@ -29,7 +29,6 @@ use crate::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snaps
 use crate::watch::watch::watch_start;
 
 fn main() -> Result<()> {
-    // config::toml_parser::parse_config_file();
     let cli = Cli::parse();
 
     match cli.command {
@@ -147,19 +146,11 @@ fn main() -> Result<()> {
         }
 
         Commands::Watch {
-            path,
             config
         } => {
-            if path.exists() {
-                if path == Path::new("/").to_path_buf() {
-                    bail!("Given path is root that can take a lot of time in baseline creation and also have issues with permissions")
-                }
-                let p = Path::new(&config);
-                if !p.exists() {
-                    bail!("Give config file not found check the path again")
-                }
-                let config_data = parse_config_file(config)?;
-                watch_start(&path,&config_data)?;
+            let config_data = parse_config_file(config)?;
+            if !config_data.monitor_paths.is_empty() {
+                watch_start(&config_data)?;
             } else {
                 println!("Given Path doesn't exist");
             }

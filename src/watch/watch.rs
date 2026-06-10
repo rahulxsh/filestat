@@ -1,38 +1,67 @@
-use notify::{Event,Result,RecursiveMode,Watcher};
+use std::collections::HashMap;
+use notify::{Event, Result, RecursiveMode, Watcher};
 use std::sync::mpsc;
-use std::path::{PathBuf};
+use std::path::{Path};
 use crate::config::toml_parser::ConfigFile;
 use crate::watch::baseline_builder::build;
 use crate::watch::baseline_store::{create_baseline_file, load_baseline_file, BASELINE_FILE};
 use crate::watch::critical_path::{get_critical_paths};
 use crate::watch::display_event::display_event;
+use crate::watch::models::BaseLineFile;
 
-pub fn watch_start(path:&PathBuf,critical_paths:&ConfigFile) -> Result<()> {
+pub fn watch_start(config_paths:&ConfigFile) -> Result<()> {
     let mut baseline = if let Some(base_line) = load_baseline_file(BASELINE_FILE) {
         println!("Loaded existing baseline.json");
         base_line
     }else {
         println!("Building baseline.json for integrity...");
-        let baseline = build(path).expect("Baseline build failed");
+        let mut map = BaseLineFile {
+            hashes:HashMap::new()
+        };
 
-        create_baseline_file(&baseline,BASELINE_FILE);
+        let baseline_config_paths = config_paths.monitor_paths.clone();
+        for p in baseline_config_paths {
+            let baseline = build(&p).expect("Baseline build failed");
+
+            map.hashes.extend(baseline.hashes)
+        }
+
+        create_baseline_file(&map,BASELINE_FILE);
 
         println!("Baseline created");
-        baseline
+        map
     };
     println!("Success");
 
     let (tx,rx) = mpsc::channel::<Result<Event>>();
-    let basepath = path.canonicalize()?;
-    println!("PATHS FROM FILE:{:?}",critical_paths.critical_paths);
-    let critical_paths = get_critical_paths(critical_paths.critical_paths.clone());
-    println!("CRITICAL_PATHS:{:?}",critical_paths.paths);
+    let mut basepath = vec![];
+    let mut put_c_path = vec![];
+    let channel_config_paths = config_paths.monitor_paths.clone();
+    for p in channel_config_paths {
+        let canon_path= p.canonicalize()?;
+        put_c_path.push(canon_path);
+    }
+
+    for c_p in put_c_path.iter() {
+        basepath.push(c_p.as_path());
+    }
+    let critical_paths = get_critical_paths(config_paths.critical_paths.clone());
 
     let mut watcher = notify::recommended_watcher(tx)?;
 
 
-    watcher.watch(path, RecursiveMode::Recursive)?;
-    println!("Watching:{:?}",&path);
+   for p in config_paths.monitor_paths.iter() {
+       let path = p.clone();
+       if path == Path::new("/") {
+           return Err(notify::Error::new(notify::ErrorKind::Generic(String::from("Root path can not be monitored as it contain os secret paths"))))
+       }
+       if path.exists() {
+           println!("Watching:{:?}",&p);
+           watcher.watch(path.as_path(), RecursiveMode::Recursive)?;
+       }else {
+           println!("⚠️Skipping:{},NOT EXIST",path.display());
+       }
+   }
 
     for res  in rx {
         match res {

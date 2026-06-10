@@ -10,7 +10,7 @@ use anyhow::Result;
 use crate::watch::alert::print_alert;
 use crate::watch::critical_path::{get_severity_level, CriticalPaths};
 
-pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,critical_paths: &CriticalPaths) {
+pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLineFile,critical_paths: &CriticalPaths) {
     match event.kind {
         EventKind::Create(CreateKind::File) => {
             // display(&event.paths,EventTypes::CREATE,base_path);
@@ -26,19 +26,21 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,c
                             continue;
                         };
 
-                        if let Ok(relative_path) = path.strip_prefix(base_path) {
-                            let severity: Severity = get_severity_level(path, Severity::Medium, critical_paths);
-                            display_integrity(
-                                relative_path.to_path_buf(),
-                                None,
-                                Some(hash.to_string().clone()),
-                                None,
-                                Some(size),
-                                None,
-                                Some(modified),
-                                AlertType::FileCreated,
-                                severity
-                            );
+                        for &p in base_path.iter() {
+                            if let Ok(relative_path) = path.strip_prefix(p) {
+                                let severity: Severity = get_severity_level(path, Severity::Medium, critical_paths);
+                                display_integrity(
+                                    relative_path.to_path_buf(),
+                                    None,
+                                    Some(hash.to_string().clone()),
+                                    None,
+                                    Some(size),
+                                    None,
+                                    Some(modified),
+                                    AlertType::FileCreated,
+                                    severity
+                                );
+                            }
                         }
                         baseline.insert(path.clone(), BaselineFileInfo {
                             size,
@@ -62,19 +64,21 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,c
         EventKind::Create(CreateKind::Folder) => {
             // display(&event.paths,EventTypes::CREATE,base_path);
             for path in &event.paths {
-                if let Ok(relative_path) = path.strip_prefix(base_path) {
-                    let severity = get_severity_level(path, Severity::Low, critical_paths);
-                    display_integrity(
-                        relative_path.to_path_buf(),
-                        None,
-                        None,
-                        None,
-                        None,
-                        None,
-                        None,
-                        AlertType::DirectoryCreated,
-                        severity
-                    )
+                for &p in base_path.iter() {
+                    if let Ok(relative_path) = path.strip_prefix(p) {
+                        let severity = get_severity_level(path, Severity::Low, critical_paths);
+                        display_integrity(
+                            relative_path.to_path_buf(),
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            AlertType::DirectoryCreated,
+                            severity
+                        )
+                    }
                 }
             }
         },
@@ -94,19 +98,21 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,c
                                 continue;
                             };
                             if &old_hash.hash != &new_hash {
-                                if let Ok(relative_path) = path.strip_prefix(base_path) {
-                                    let severity = get_severity_level(path, Severity::High, critical_paths);
-                                    display_integrity(
-                                        relative_path.to_path_buf(),
-                                        Some(old_hash.hash.clone()),
-                                        Some(new_hash.clone()),
-                                        Some(old_hash.size),
-                                        Some(size),
-                                        Some(old_hash.modified),
-                                        Some(modified),
-                                        AlertType::HashChanged,
-                                        severity
-                                    );
+                                for &p in base_path.iter() {
+                                    if let Ok(relative_path) = path.strip_prefix(p) {
+                                        let severity = get_severity_level(path, Severity::High, critical_paths);
+                                        display_integrity(
+                                            relative_path.to_path_buf(),
+                                            Some(old_hash.hash.clone()),
+                                            Some(new_hash.clone()),
+                                            Some(old_hash.size),
+                                            Some(size),
+                                            Some(old_hash.modified),
+                                            Some(modified),
+                                            AlertType::HashChanged,
+                                            severity
+                                        );
+                                    }
                                 }
                             }
                             baseline.insert(
@@ -137,17 +143,19 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,c
         EventKind::Remove(RemoveKind::File) => {
             for path in &event.paths {
                 if let Some(res) = baseline.remove(path) {
-                    if let Ok(relative_path) = path.strip_prefix(base_path) {
-                        let severity = get_severity_level(path, Severity::High, critical_paths);
-                        display_integrity(
-                            relative_path.to_path_buf(),
-                            Some(res.hash),
-                            None,
-                            Some(res.size),
-                            None, Some(res.modified), None,
-                            AlertType::FileDeleted,
-                            severity
-                        )
+                    for &p in base_path.iter() {
+                        if let Ok(relative_path) = path.strip_prefix(p) {
+                            let severity = get_severity_level(path, Severity::High, critical_paths);
+                            display_integrity(
+                                relative_path.to_path_buf(),
+                                Some(res.hash.clone()),
+                                None,
+                                Some(res.size),
+                                None, Some(res.modified), None,
+                                AlertType::FileDeleted,
+                                severity
+                            )
+                        }
                     }
                 }
             }
@@ -160,19 +168,21 @@ pub fn display_event(event:&Event, base_path:&Path, baseline:&mut BaseLineFile,c
             for path in &event.paths {
                 let _ = baseline.remove(path);
 
-                if let Ok(relative_path) = path.strip_prefix(base_path) {
-                    let severity = get_severity_level(path, Severity::Medium, critical_paths);
-                    display_integrity(
-                        relative_path.to_path_buf(),
-                        None,
-                        None,
-                        None,
-                        None,
-                        None,
-                        None,
-                        AlertType::DirectoryDeleted,
-                        severity,
-                    );
+                for &p in base_path.iter() {
+                    if let Ok(relative_path) = path.strip_prefix(p) {
+                        let severity = get_severity_level(path, Severity::Medium, critical_paths);
+                        display_integrity(
+                            relative_path.to_path_buf(),
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                            AlertType::DirectoryDeleted,
+                            severity,
+                        );
+                    }
                 }
             }
 
