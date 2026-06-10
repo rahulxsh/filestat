@@ -1,3 +1,4 @@
 /target/
 .filestat-baseline.json
 .snapshots
+.idea
