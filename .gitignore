@@ -2,3 +2,4 @@
 .filestat-baseline.json
 .snapshots
 .idea
+.DS_Store
