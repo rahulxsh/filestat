@@ -27,16 +27,17 @@ pub fn scan(
     let walk_dir = WalkDir::new(path)
         .into_iter()
         .filter_entry(|v| {
-            if let Some(value) = &filters.ignore {
-                    if value.is_empty() {
-                        println!("Ignore flag length:{}",value.len());
-                        return true
-                    }
-                let path_str = v.path().to_string_lossy().to_string();
-                let should_keep = !value.iter().any(|pattern| path_str.contains(pattern));
-                return should_keep
-            };
-            true
+            if let Some(ignore) = &filters.ignore {
+                let ignored = v.path().components().any(|component| {
+                    let name = component.as_os_str().to_string_lossy();
+
+                    ignore.iter().any(|pattern| pattern == &name)
+                });
+
+                !ignored
+            } else {
+                true
+            }
         });
 
     for entry_dir in walk_dir {

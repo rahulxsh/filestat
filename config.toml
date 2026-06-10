@@ -1,6 +1,7 @@
 monitor_paths = [
     "/Users/rahulsharma/.ssh",
-    "/Users/rahulsharma/.config"
+    "/Users/rahulsharma/.config",
+    "/Users/rahulsharma/Projects/filestat"
 ]
 
 critical_paths = [
@@ -9,4 +10,11 @@ critical_paths = [
 
 snapshot_paths = [
     "/Users/rahulsharma/.ssh"
+]
+
+ignore = [
+    "node_modules",
+    ".git",
+    "target",
+    "src"
 ]

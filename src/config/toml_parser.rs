@@ -10,7 +10,8 @@ pub fn parse_config_file(path:String) -> Result<ConfigFile> {
     let mut config_paths = ConfigFile {
         critical_paths:vec![],
         snapshot_paths:vec![],
-        monitor_paths:vec![]
+        monitor_paths:vec![],
+        ignore:vec![]
     };
 
     for monitor_path in config.monitor_paths {
@@ -18,7 +19,7 @@ pub fn parse_config_file(path:String) -> Result<ConfigFile> {
         if path.exists() {
             config_paths.monitor_paths.push(path.to_path_buf())
         }else {
-            println!("⚠️ --config file path doesn't exist make sure to check the absolute path");
+            println!("⚠️ --config: Monitor file path doesn't exist make sure to check the absolute path");
             println!("PATH:{}",path.display());
         }
     }
@@ -28,7 +29,7 @@ pub fn parse_config_file(path:String) -> Result<ConfigFile> {
         if path.exists() {
             config_paths.critical_paths.push(path.to_path_buf())
         }else {
-            println!("⚠️ --config file path doesn't exist make sure to check the absolute path");
+            println!("⚠️ --config:Critical file path doesn't exist make sure to check the absolute path");
             println!("PATH:{}",path.display());
         }
     }
@@ -38,9 +39,14 @@ pub fn parse_config_file(path:String) -> Result<ConfigFile> {
         if path.exists() {
             config_paths.snapshot_paths.push(path.to_path_buf())
         }else {
-            println!("⚠️ --config file path doesn't exist make sure to check the absolute path");
+            println!("⚠️ --config: Snapshot file path doesn't exist make sure to check the absolute path");
             println!("PATH:{}",path.display());
         }
+    }
+
+    for ig in config.ignore {
+        let path = Path::new(&ig);
+        config_paths.ignore.push(path.to_path_buf())
     }
 
     Ok(config_paths)
@@ -50,5 +56,6 @@ pub fn parse_config_file(path:String) -> Result<ConfigFile> {
 pub struct ConfigFile {
     pub critical_paths:Vec<PathBuf>,
     pub snapshot_paths:Vec<PathBuf>,
-    pub monitor_paths:Vec<PathBuf>
+    pub monitor_paths:Vec<PathBuf>,
+    pub ignore:Vec<PathBuf>
 }

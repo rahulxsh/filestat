@@ -21,14 +21,19 @@ pub fn get_snapshot_paths(snap_paths:Vec<PathBuf>) -> Vec<PathBuf> {
     valid_paths
 }
 pub fn save_snapshot(filepath:&String,paths:ConfigFile){
-    let paths = get_snapshot_paths(paths.snapshot_paths);
+    let paths_snap = get_snapshot_paths(paths.snapshot_paths);
+    let mut ignore_paths = vec![];
+
+    for i in paths.ignore{
+        ignore_paths.push(i.to_string_lossy().to_string())
+    }
 
     let mut map = BaseLineFile {
         hashes:HashMap::new()
     };
 
-    for path in paths {
-        let baseline = build(&path);
+    for path in paths_snap {
+        let baseline = build(&path,ignore_paths.clone());
 
         if let Ok(baseline) = baseline {
             map.hashes.extend(baseline.hashes)
@@ -39,14 +44,20 @@ pub fn save_snapshot(filepath:&String,paths:ConfigFile){
 }
 
 pub fn get_current_snapshot(snap_paths:ConfigFile) -> Result<BaseLineFile>{
-    let paths = get_snapshot_paths(snap_paths.snapshot_paths);
+    let paths_snap = get_snapshot_paths(snap_paths.snapshot_paths);
+
+    let mut ignore_paths = vec![];
+
+    for i in snap_paths.ignore{
+        ignore_paths.push(i.to_string_lossy().to_string())
+    }
 
     let mut map = BaseLineFile {
         hashes:HashMap::new()
     };
 
-    for path in paths {
-        let baseline = build(&path);
+    for path in paths_snap {
+        let baseline = build(&path,ignore_paths.clone());
 
         if let Ok(baseline) = baseline {
             map.hashes.extend(baseline.hashes)

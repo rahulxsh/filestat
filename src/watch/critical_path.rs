@@ -8,7 +8,6 @@ pub struct CriticalPaths {
 
 pub fn get_critical_paths(paths:Vec<PathBuf>) -> CriticalPaths {
     let critical_paths = CriticalPaths {
-        //TODO: Replace this with actual config file
         paths
     };
 

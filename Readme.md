@@ -98,6 +98,7 @@ Whether you're analyzing storage usage, identifying duplicate files, benchmarkin
 | Alert System          | ✅      |
 | Critical Path Rules   | ✅      |
 | Snapshot Engine       | ✅      |
+| Config File Support   | ✅      |
 | SQLite Storage        | 🚧     |
 | Agent Mode            | ⏳      |
 
@@ -229,9 +230,86 @@ filestat scan . --duplicate
 ### File Integrity Monitoring
 
 ```bash
-filestat watch .
+filestat watch --config ./config.toml
 ```
 
+### Configuration File
+
+FileStat supports configuration-driven monitoring and snapshot management.
+
+Example `config.toml`:
+
+```toml
+monitor_paths = [
+    "/Users/rahulsharma/.ssh",
+    "/Users/rahulsharma/.config",
+    "/Users/rahulsharma/Projects/filestat"
+]
+
+critical_paths = [
+    "/Users/rahulsharma/.ssh"
+]
+
+snapshot_paths = [
+    "/Users/rahulsharma/.ssh"
+]
+
+ignore = [
+    "node_modules",
+    ".git",
+    "target",
+    "src"
+]
+```
+
+#### Configuration Options
+
+| Option | Description |
+|----------|-------------|
+| `monitor_paths` | Directories monitored by the File Integrity Monitoring (FIM) engine. |
+| `critical_paths` | Sensitive files or directories that generate elevated severity alerts when modified. |
+| `snapshot_paths` | Directories included when creating filesystem snapshots. |
+| `ignore` | Directory names ignored during scanning, monitoring, baseline creation, and snapshot generation. |
+
+#### Start Monitoring Using Configuration
+
+```bash
+filestat watch --config config.toml
+```
+
+#### Create Snapshot
+
+```bash
+filestat snapshot save --config config.toml
+```
+
+#### Compare Snapshot
+
+```bash
+filestat snapshot diff --config config.toml
+```
+
+#### Ignored Directories
+
+Ignored entries are matched by directory name and skipped recursively.
+
+Examples:
+
+```toml
+ignore = [
+    "target",
+    "node_modules",
+    ".git",
+    ".filestat"
+]
+```
+
+This prevents temporary build artifacts, package caches, repository metadata, and FileStat internal files from being included in:
+
+- Baseline creation
+- Real-time monitoring
+- Snapshot generation
+- Integrity verification
 ---
 
 ## 💡 Example Commands
@@ -246,24 +324,6 @@ Find duplicate files:
 
 ```bash
 filestat scan . --duplicate
-```
-
-Monitor a directory for integrity changes:
-
-```bash
-filestat watch ~/Projects
-```
-
-Save current selected path files snapshot
-
-```bash
-filestat snapshot save
-```
-
-Diff. current selected path files snapshot
-
-```bash
-filestat snapshot diff
 ```
 
 Snapshot diff to show changed file path

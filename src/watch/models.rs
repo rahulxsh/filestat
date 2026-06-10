@@ -22,9 +22,9 @@ pub struct Baseline {
 }
 
 impl BaseLineFile {
-    pub fn build(path:&PathBuf) -> Result<Self> {
+    pub fn build(path:&PathBuf,ignore_paths:Option<Vec<String>>) -> Result<Self> {
         let filter_config = FilterConfig {
-            ignore:None,
+            ignore:ignore_paths,
             ext:None,
             min_size:None,
             max_size:None
@@ -111,7 +111,7 @@ pub struct Alert {
     pub alert_type: AlertType,
     pub severity: Severity,
     pub path: PathBuf,
-    
+
     pub old_hash: Option<String>,
     pub new_hash: Option<String>,
 

@@ -7,15 +7,22 @@ use crate::hashing::hash_file::hash_file;
 use crate::watch::baseline_store::update_baseline_file;
 use crate::watch::models::{Alert, AlertType, BaseLineFile, BaselineFileInfo, EventTypes, Severity};
 use anyhow::Result;
+use crate::config::toml_parser::ConfigFile;
 use crate::watch::alert::print_alert;
 use crate::watch::critical_path::{get_severity_level, CriticalPaths};
 
-pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLineFile,critical_paths: &CriticalPaths) {
+pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLineFile,critical_paths: &CriticalPaths,ignore_paths:&ConfigFile) {
+    if event.paths.iter().any(|p| {
+        p.to_string_lossy().to_string().ends_with(".filestat-baseline.json")
+    }){
+        return;
+    }
+
     match event.kind {
         EventKind::Create(CreateKind::File) => {
             // display(&event.paths,EventTypes::CREATE,base_path);
             for path in &event.paths {
-                if should_ignore(path) {
+                if should_ignore(path,ignore_paths) {
                     continue;
                 }
                 match hash_file(path) {
@@ -63,7 +70,11 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
         },
         EventKind::Create(CreateKind::Folder) => {
             // display(&event.paths,EventTypes::CREATE,base_path);
+
             for path in &event.paths {
+                if should_ignore(path, ignore_paths) {
+                    continue;
+                }
                 for &p in base_path.iter() {
                     if let Ok(relative_path) = path.strip_prefix(p) {
                         let severity = get_severity_level(path, Severity::Low, critical_paths);
@@ -85,7 +96,10 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
         EventKind::Modify(ModifyKind::Data(_)) => {
             // display(&event.paths,EventTypes::MODIFY,base_path);
             for path in &event.paths {
-                if should_ignore(path) {
+                if should_ignore(path, ignore_paths) {
+                    continue;
+                }
+                if should_ignore(path,ignore_paths) {
                     continue;
                 }
                 if let Some(old_hash) = baseline.get(path) {
@@ -142,6 +156,9 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
 
         EventKind::Remove(RemoveKind::File) => {
             for path in &event.paths {
+                if should_ignore(path, ignore_paths) {
+                    continue;
+                }
                 if let Some(res) = baseline.remove(path) {
                     for &p in base_path.iter() {
                         if let Ok(relative_path) = path.strip_prefix(p) {
@@ -166,6 +183,9 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
         },
         EventKind::Remove(RemoveKind::Folder) => {
             for path in &event.paths {
+                if should_ignore(path, ignore_paths) {
+                    continue;
+                }
                 let _ = baseline.remove(path);
 
                 for &p in base_path.iter() {
@@ -245,10 +265,21 @@ fn display_integrity(
 }
 
 
-fn should_ignore(path: &Path) -> bool {
-    path.file_name()
+fn should_ignore(path: &Path, config: &ConfigFile) -> bool {
+    if path.file_name()
         .map(|name| name.to_string_lossy().ends_with('~'))
         .unwrap_or(false)
+    {
+        return true;
+    }
+
+    path.components().any(|component| {
+        let name = component.as_os_str().to_string_lossy();
+
+        config.ignore.iter().any(|pattern| {
+            pattern.to_string_lossy() == name
+        })
+    })
 }
 
 

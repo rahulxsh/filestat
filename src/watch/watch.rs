@@ -14,14 +14,21 @@ pub fn watch_start(config_paths:&ConfigFile) -> Result<()> {
         println!("Loaded existing baseline.json");
         base_line
     }else {
-        println!("Building baseline.json for integrity...");
+        println!("Building baseline for integrity...");
         let mut map = BaseLineFile {
             hashes:HashMap::new()
         };
 
         let baseline_config_paths = config_paths.monitor_paths.clone();
+        let mut ignore_paths = vec![];
+
+        if !config_paths.ignore.is_empty() {
+            for p in config_paths.ignore.iter() {
+                ignore_paths.push(p.to_string_lossy().to_string());
+            }
+        }
         for p in baseline_config_paths {
-            let baseline = build(&p).expect("Baseline build failed");
+            let baseline = build(&p,ignore_paths.clone()).expect("Baseline build failed");
 
             map.hashes.extend(baseline.hashes)
         }
@@ -66,7 +73,9 @@ pub fn watch_start(config_paths:&ConfigFile) -> Result<()> {
     for res  in rx {
         match res {
             Ok(event) =>{
-                display_event(&event,&basepath,&mut baseline,&critical_paths);
+                for path in &event.paths {
+                }
+                display_event(&event,&basepath,&mut baseline,&critical_paths,&config_paths);
             },
             Err(e) => println!("Watch error:{}",e),
         }
