@@ -67,6 +67,10 @@ pub enum Commands {
 
         #[arg(long, default_value_t = false )]
         show_paths:bool,
+    },
+    Alerts {
+        #[arg(long,default_value_t = 20)]
+        limit:usize
     }
 }
 

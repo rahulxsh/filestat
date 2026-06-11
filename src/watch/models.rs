@@ -5,6 +5,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crate::models::FilterConfig;
 use crate::scanner::scan;
 use anyhow::Result;
+use rusqlite::types::{FromSql, FromSqlResult, ValueRef};
 use serde::{Deserialize, Serialize};
 use crate::hashing::hash_file::hash_file;
 
@@ -136,6 +137,33 @@ impl Alert {
     }
 }
 
+
+impl Severity {
+    pub fn from_str(value: &str) -> Option<Self> {
+        match value {
+            "LOW" => Some(Self::Low),
+            "MEDIUM" => Some(Self::Medium),
+            "HIGH" => Some(Self::High),
+            "CRITICAL" => Some(Self::Critical),
+            _ => None,
+        }
+    }
+}
+
+impl AlertType {
+    pub fn from_str(value: &str) -> Option<Self> {
+        match value {
+            "FILE CREATED" => Some(Self::FileCreated),
+            "FILE DELETED" => Some(Self::FileDeleted),
+            "DIRECTORY CREATED" => Some(Self::DirectoryCreated),
+            "DIRECTORY DELETED" => Some(Self::DirectoryDeleted),
+            "HASH CHANGED" => Some(Self::HashChanged),
+            "PERMISSION CHANGED" => Some(Self::PermissionChanged),
+            "OWNERSHIP CHANGED" => Some(Self::OwnershipChanged),
+            _ => None,
+        }
+    }
+}
 impl Display for Severity {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {

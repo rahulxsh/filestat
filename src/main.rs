@@ -11,6 +11,7 @@ mod watch;
 mod snapshot;
 mod config;
 mod storage;
+mod alerts;
 
 use std::collections::HashMap;
 use std::fs;
@@ -26,6 +27,7 @@ use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
 use std::time::{Instant};
 use rusqlite::Connection;
+use crate::alerts::alerts::{alerts, display_alerts};
 use crate::config::toml_parser::parse_config_file;
 use crate::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapshot_diff};
 use crate::storage::db::{get_db_path, init_db};
@@ -183,8 +185,15 @@ fn main() -> Result<()> {
                 }
             }
         }
+
+        Commands::Alerts {limit} => {
+            let limit_ = limit as i64;
+            let alerts = alerts(&conn,limit_)?;
+            for alert in alerts {
+               display_alerts(alert);
+            }
+        }
     }
 
     Ok(())
 }
-
