@@ -96,7 +96,7 @@ pub enum AlertType {
     OwnershipChanged,
 }
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub enum Severity {
     Low,
     Medium,
@@ -117,6 +117,23 @@ pub struct Alert {
 
     pub old_size:Option<u64>,
     pub new_size:Option<u64>
+}
+
+impl Alert {
+    pub fn new(self) -> Alert {
+        let alert = Alert {
+            timestamp:self.timestamp,
+            alert_type:self.alert_type,
+            severity:self.severity,
+            path:self.path,
+            old_hash:self.old_hash,
+            new_hash:self.new_hash,
+            old_size:self.old_size,
+            new_size:self.new_size
+        };
+
+        alert
+    }
 }
 
 impl Display for Severity {

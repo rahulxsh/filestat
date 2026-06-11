@@ -7,11 +7,20 @@ use crate::hashing::hash_file::hash_file;
 use crate::watch::baseline_store::update_baseline_file;
 use crate::watch::models::{Alert, AlertType, BaseLineFile, BaselineFileInfo, EventTypes, Severity};
 use anyhow::Result;
+use rusqlite::Connection;
 use crate::config::toml_parser::ConfigFile;
+use crate::storage::db::insert_alert;
 use crate::watch::alert::print_alert;
 use crate::watch::critical_path::{get_severity_level, CriticalPaths};
 
-pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLineFile,critical_paths: &CriticalPaths,ignore_paths:&ConfigFile) {
+pub fn display_event(
+    event:&Event, 
+    base_path:&Vec<&Path>, 
+    baseline:&mut BaseLineFile,
+    critical_paths: &CriticalPaths,
+    ignore_paths:&ConfigFile,
+    conn:&Connection
+) {
     if event.paths.iter().any(|p| {
         p.to_string_lossy().to_string().ends_with(".filestat-baseline.json")
     }){
@@ -45,8 +54,20 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
                                     None,
                                     Some(modified),
                                     AlertType::FileCreated,
-                                    severity
+                                    severity.clone()
                                 );
+                                let alert = Alert {
+                                    timestamp:SystemTime::now(),
+                                    alert_type:AlertType::FileCreated,
+                                    severity,
+                                    path:relative_path.to_path_buf(),
+                                    old_size:None,
+                                    new_size:Some(size),
+                                    old_hash:None,
+                                    new_hash:Some(hash.to_string())
+                                };
+                                
+                                let _ = insert_alert(conn,&alert);
                             }
                         }
                         baseline.insert(path.clone(), BaselineFileInfo {
@@ -87,8 +108,21 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
                             None,
                             None,
                             AlertType::DirectoryCreated,
-                            severity
-                        )
+                            severity.clone()
+                        );
+
+                        let alert = Alert {
+                            timestamp:SystemTime::now(),
+                            alert_type:AlertType::DirectoryCreated,
+                            severity,
+                            path:relative_path.to_path_buf(),
+                            old_size:None,
+                            new_size:None,
+                            old_hash:None,
+                            new_hash:None
+                        };
+
+                        let _ = insert_alert(conn,&alert);
                     }
                 }
             }
@@ -124,8 +158,21 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
                                             Some(old_hash.modified),
                                             Some(modified),
                                             AlertType::HashChanged,
-                                            severity
+                                            severity.clone()
                                         );
+
+                                        let alert = Alert {
+                                            timestamp:SystemTime::now(),
+                                            alert_type:AlertType::HashChanged,
+                                            severity,
+                                            path:relative_path.to_path_buf(),
+                                            old_size:Some(old_hash.size),
+                                            new_size:Some(size),
+                                            old_hash:Some(old_hash.hash.clone()),
+                                            new_hash:Some(new_hash.to_string())
+                                        };
+
+                                        let _ = insert_alert(conn,&alert);
                                     }
                                 }
                             }
@@ -170,8 +217,21 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
                                 Some(res.size),
                                 None, Some(res.modified), None,
                                 AlertType::FileDeleted,
-                                severity
-                            )
+                                severity.clone()
+                            );
+
+                            let alert = Alert {
+                                timestamp:SystemTime::now(),
+                                alert_type:AlertType::FileDeleted,
+                                severity,
+                                path:relative_path.to_path_buf(),
+                                old_size:Some(res.size),
+                                new_size:None,
+                                old_hash:Some(res.hash.clone()),
+                                new_hash:None
+                            };
+
+                            let _ = insert_alert(conn,&alert);
                         }
                     }
                 }
@@ -200,8 +260,21 @@ pub fn display_event(event:&Event, base_path:&Vec<&Path>, baseline:&mut BaseLine
                             None,
                             None,
                             AlertType::DirectoryDeleted,
-                            severity,
+                            severity.clone(),
                         );
+
+                        let alert = Alert {
+                            timestamp:SystemTime::now(),
+                            alert_type:AlertType::DirectoryDeleted,
+                            severity,
+                            path:relative_path.to_path_buf(),
+                            old_size:None,
+                            new_size:None,
+                            old_hash:None,
+                            new_hash:None
+                        };
+
+                        let _ = insert_alert(conn,&alert);
                     }
                 }
             }

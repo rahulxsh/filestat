@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use notify::{Event, Result, RecursiveMode, Watcher};
 use std::sync::mpsc;
 use std::path::{Path};
+use rusqlite::Connection;
 use crate::config::toml_parser::ConfigFile;
 use crate::watch::baseline_builder::build;
 use crate::watch::baseline_store::{create_baseline_file, load_baseline_file, BASELINE_FILE};
@@ -9,7 +10,7 @@ use crate::watch::critical_path::{get_critical_paths};
 use crate::watch::display_event::display_event;
 use crate::watch::models::BaseLineFile;
 
-pub fn watch_start(config_paths:&ConfigFile) -> Result<()> {
+pub fn watch_start(config_paths:&ConfigFile,conn:&Connection) -> Result<()> {
     let mut baseline = if let Some(base_line) = load_baseline_file(BASELINE_FILE) {
         println!("Loaded existing baseline.json");
         base_line
@@ -75,7 +76,7 @@ pub fn watch_start(config_paths:&ConfigFile) -> Result<()> {
             Ok(event) =>{
                 for path in &event.paths {
                 }
-                display_event(&event,&basepath,&mut baseline,&critical_paths,&config_paths);
+                display_event(&event,&basepath,&mut baseline,&critical_paths,&config_paths,&conn);
             },
             Err(e) => println!("Watch error:{}",e),
         }

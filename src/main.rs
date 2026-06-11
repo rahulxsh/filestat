@@ -10,6 +10,7 @@ mod hashing;
 mod watch;
 mod snapshot;
 mod config;
+mod storage;
 
 use std::collections::HashMap;
 use std::fs;
@@ -24,11 +25,19 @@ use crate::hashing::get_duplicates::{get_full_duplicates};
 use crate::models::{FilterConfig, PerformanceMetrics};
 use crate::stats::generate_stats;
 use std::time::{Instant};
+use rusqlite::Connection;
 use crate::config::toml_parser::parse_config_file;
 use crate::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapshot_diff};
+use crate::storage::db::{get_db_path, init_db};
 use crate::watch::watch::watch_start;
 
 fn main() -> Result<()> {
+    let db_path = get_db_path();
+    let conn = Connection::open(db_path)?;
+    init_db(&conn).expect("Unexpected Error: Storage init failed");
+
+
+
     let cli = Cli::parse();
 
     match cli.command {
@@ -150,7 +159,7 @@ fn main() -> Result<()> {
         } => {
             let config_data = parse_config_file(config)?;
             if !config_data.monitor_paths.is_empty() {
-                watch_start(&config_data)?;
+                watch_start(&config_data,&conn)?;
             } else {
                 println!("Given Path doesn't exist");
             }
