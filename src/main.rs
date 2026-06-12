@@ -28,8 +28,6 @@ use crate::agent::agent::Agent;
 fn main() -> Result<()> {
     let db_path = get_db_path();
     let conn = Connection::open(db_path)?;
-    init_db(&conn).expect("Unexpected Error: Storage init failed");
-
 
 
     let cli = Cli::parse();
@@ -185,9 +183,9 @@ fn main() -> Result<()> {
                display_alerts(alert);
             }
         }
-        
+
         Commands::Agent => {
-            Agent::start();
+            Agent::start(&conn)?;
         }
     }
 
