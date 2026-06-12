@@ -1,37 +1,27 @@
 mod clap_config;
-mod models;
-mod scanner;
-mod stats;
-mod files;
-mod metadata;
-mod filters;
-mod utils;
-mod hashing;
-mod watch;
-mod snapshot;
 mod config;
 mod storage;
-mod alerts;
+mod fim;
 
 use std::collections::HashMap;
 use std::fs;
 use clap::Parser;
 use std::path::{Path, PathBuf};
 use crate::clap_config::{Cli, Commands, SnapshotCommands};
-use crate::scanner::scan;
+use fim::scanner::scan;
 use anyhow::{bail, Result};
-use crate::files::csv::export_csv;
-use crate::files::json::{json_stats, save_json};
-use crate::hashing::get_duplicates::{get_full_duplicates};
-use crate::models::{FilterConfig, PerformanceMetrics};
-use crate::stats::generate_stats;
-use std::time::{Instant};
+use fim::files::csv::export_csv;
+use fim::files::json::{json_stats, save_json};
+use fim::hashing::get_duplicates::get_full_duplicates;
+use fim::models::{FilterConfig, PerformanceMetrics};
+use fim::stats::generate_stats;
+use std::time::Instant;
 use rusqlite::Connection;
-use crate::alerts::alerts::{alerts, display_alerts};
+use crate::fim::alerts::alerts::{alerts, display_alerts};
 use crate::config::toml_parser::parse_config_file;
-use crate::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapshot_diff};
+use fim::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapshot_diff};
 use crate::storage::db::{get_db_path, init_db};
-use crate::watch::watch::watch_start;
+use fim::watch::watch::watch_start;
 
 fn main() -> Result<()> {
     let db_path = get_db_path();

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::path::{PathBuf};
 use anyhow::Result;
 use blake3::Hash;
-use crate::hashing::hash_file::{hash_file, hash_file_partial};
+use crate::fim::hashing::hash_file::{hash_file, hash_file_partial};
 use rayon::prelude::*;
 
 

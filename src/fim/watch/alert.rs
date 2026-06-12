@@ -1,6 +1,6 @@
 use std::path::{PathBuf};
 use std::time::SystemTime;
-use crate::watch::models::{Alert, AlertType, Severity};
+use crate::fim::watch::models::{Alert, AlertType, Severity};
 
 #[allow(unused)]
 pub fn hash_changed_alert<'a>(

@@ -1,4 +1,4 @@
-use crate::models::FileInfo;
+use crate::fim::models::FileInfo;
 
 #[allow(unused)]
 pub fn matches_ignore(file:&FileInfo,ignore:&Option<Vec<String>>) -> bool {

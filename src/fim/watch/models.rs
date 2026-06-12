@@ -2,12 +2,12 @@ use std::collections::HashMap;
 use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
-use crate::models::FilterConfig;
-use crate::scanner::scan;
+use crate::fim::models::FilterConfig;
+use crate::fim::scanner::scan;
 use anyhow::Result;
 use rusqlite::types::{FromSql, FromSqlResult, ValueRef};
 use serde::{Deserialize, Serialize};
-use crate::hashing::hash_file::hash_file;
+use crate::fim::hashing::hash_file::hash_file;
 
 #[allow(unused)]
 pub enum EventTypes{

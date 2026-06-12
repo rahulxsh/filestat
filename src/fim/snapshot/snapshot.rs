@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::path::{PathBuf};
-use crate::watch::baseline_builder::build;
-use crate::watch::baseline_store::{create_baseline_file, load_baseline_file};
-use crate::watch::models::BaseLineFile;
+use crate::fim::watch::baseline_builder::build;
+use crate::fim::watch::baseline_store::{create_baseline_file, load_baseline_file};
+use crate::fim::watch::models::BaseLineFile;
 use anyhow::{Context, Result};
 use crate::config::toml_parser::ConfigFile;
-use crate::snapshot::model::SnapshotDiff;
+use crate::fim::snapshot::model::SnapshotDiff;
 
 pub fn get_snapshot_paths(snap_paths:Vec<PathBuf>) -> Vec<PathBuf> {
     let paths = snap_paths;

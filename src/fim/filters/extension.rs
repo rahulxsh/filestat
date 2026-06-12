@@ -1,4 +1,4 @@
-use crate::models::FileInfo;
+use crate::fim::models::FileInfo;
 
 pub fn matches_extension(file:&FileInfo,ext:&Option<Vec<String>>) -> bool {
     match ext {

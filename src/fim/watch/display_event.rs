@@ -3,15 +3,15 @@ use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
 use notify::event::{CreateKind, ModifyKind, RemoveKind};
 use notify::{Event, EventKind};
-use crate::hashing::hash_file::hash_file;
-use crate::watch::baseline_store::update_baseline_file;
-use crate::watch::models::{Alert, AlertType, BaseLineFile, BaselineFileInfo, EventTypes, Severity};
+use crate::fim::hashing::hash_file::hash_file;
+use crate::fim::watch::baseline_store::update_baseline_file;
+use crate::fim::watch::models::{Alert, AlertType, BaseLineFile, BaselineFileInfo, EventTypes, Severity};
 use anyhow::Result;
 use rusqlite::Connection;
 use crate::config::toml_parser::ConfigFile;
 use crate::storage::db::insert_alert;
-use crate::watch::alert::print_alert;
-use crate::watch::critical_path::{get_severity_level, CriticalPaths};
+use crate::fim::watch::alert::print_alert;
+use crate::fim::watch::critical_path::{get_severity_level, CriticalPaths};
 
 pub fn display_event(
     event:&Event, 

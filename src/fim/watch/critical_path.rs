@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 use anyhow::Result;
-use crate::watch::models::Severity;
+use crate::fim::watch::models::Severity;
 
 pub struct CriticalPaths {
     pub paths: Vec<PathBuf>,

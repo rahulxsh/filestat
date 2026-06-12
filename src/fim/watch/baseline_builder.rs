@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use crate::watch::models::{BaseLineFile};
+use crate::fim::watch::models::{BaseLineFile};
 use anyhow::Result;
 
 pub fn build(path:&PathBuf, ignore_paths:Vec<String>) -> Result<BaseLineFile> {

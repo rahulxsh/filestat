@@ -1,10 +1,10 @@
 use std::path::Path;
 use walkdir::WalkDir;
-use crate::models::{FilterConfig, ScanResult};
+use crate::fim::models::{FilterConfig, ScanResult};
 use anyhow::{bail, Result};
-use crate::filters::extension::matches_extension;
-use crate::filters::file_size::{matches_max_file_size, matches_min_file_size};
-use crate::metadata::get_metadata;
+use crate::fim::filters::extension::matches_extension;
+use crate::fim::filters::file_size::{matches_max_file_size, matches_min_file_size};
+use crate::fim::metadata::get_metadata;
 
 pub fn scan(
     path: &Path,

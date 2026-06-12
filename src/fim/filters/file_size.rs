@@ -1,5 +1,5 @@
-use crate::models::FileInfo;
-use crate::utils::size_parser::parse;
+use crate::fim::models::FileInfo;
+use crate::fim::utils::size_parser::parse;
 
 pub fn  matches_min_file_size(file:&FileInfo, min_size:&Option<String>) -> bool {
     match min_size {

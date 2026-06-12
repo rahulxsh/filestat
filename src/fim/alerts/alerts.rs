@@ -2,7 +2,7 @@ use rusqlite::{Connection, Result};
 use std::path::PathBuf;
 use std::time::{Duration, UNIX_EPOCH};
 
-use crate::watch::models::{Alert, AlertType, Severity};
+use crate::fim::watch::models::{Alert, AlertType, Severity};
 
 pub fn alerts(conn: &Connection, limit: i64) -> Result<Vec<Alert>> {
     let mut stmt = conn.prepare(

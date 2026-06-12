@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use crate::models::{FileInfo, FilesSize, PerformanceMetrics, ScanResult, ScanStats};
+use crate::fim::models::{FileInfo, FilesSize, PerformanceMetrics, ScanResult, ScanStats};
 
 pub fn largets_files(files:&mut [FileInfo],top:usize) -> Vec<&FileInfo> {
     let mut largets_files:Vec<&FileInfo> = Vec::new();

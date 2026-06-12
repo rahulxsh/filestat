@@ -4,11 +4,11 @@ use std::sync::mpsc;
 use std::path::{Path};
 use rusqlite::Connection;
 use crate::config::toml_parser::ConfigFile;
-use crate::watch::baseline_builder::build;
-use crate::watch::baseline_store::{create_baseline_file, load_baseline_file, BASELINE_FILE};
-use crate::watch::critical_path::{get_critical_paths};
-use crate::watch::display_event::display_event;
-use crate::watch::models::BaseLineFile;
+use crate::fim::watch::baseline_builder::build;
+use crate::fim::watch::baseline_store::{create_baseline_file, load_baseline_file, BASELINE_FILE};
+use crate::fim::watch::critical_path::{get_critical_paths};
+use crate::fim::watch::display_event::display_event;
+use crate::fim::watch::models::BaseLineFile;
 
 pub fn watch_start(config_paths:&ConfigFile,conn:&Connection) -> Result<()> {
     let mut baseline = if let Some(base_line) = load_baseline_file(BASELINE_FILE) {

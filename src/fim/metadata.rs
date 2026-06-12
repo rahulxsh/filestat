@@ -1,6 +1,6 @@
 use walkdir::DirEntry;
 use anyhow::Result;
-use crate::models::FileInfo;
+use crate::fim::models::FileInfo;
 
 pub fn get_metadata(file:&DirEntry) -> Result<FileInfo> {
     let metadata = file.metadata()?;

@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use crate::models::{ScanStats};
+use crate::fim::models::{ScanStats};
 use anyhow::Result;
 use std::fs::write;
 

@@ -1,8 +1,8 @@
 use std::path::PathBuf;
-use std::time::{SystemTime, UNIX_EPOCH};
-use rusqlite::{Connection, Result, ToSql};
+use std::time::{UNIX_EPOCH};
+use rusqlite::{Connection, Result};
 use dirs;
-use crate::watch::models::Alert;
+use crate::fim::watch::models::Alert;
 
 pub fn get_db_path() -> PathBuf {
     let mut path = dirs::home_dir().expect("Could not determine home directory");
