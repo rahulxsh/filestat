@@ -28,6 +28,7 @@ use crate::agent::agent::Agent;
 fn main() -> Result<()> {
     let db_path = get_db_path();
     let conn = Connection::open(db_path)?;
+    init_db(&conn)?;
 
 
     let cli = Cli::parse();
@@ -185,7 +186,7 @@ fn main() -> Result<()> {
         }
 
         Commands::Agent => {
-            Agent::start(&conn)?;
+            Agent::start()?;
         }
     }
 

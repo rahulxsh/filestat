@@ -1,24 +1,33 @@
 pub struct Agent;
 use anyhow::Result;
 use rusqlite::Connection;
-use crate::config::toml_parser::parse_config_file;
-use crate::fim::watch::watch::watch_start;
-use crate::storage::db::init_db;
+use crate::config::toml_parser::{parse_config_file, ConfigFile};
+use crate::fim::module::FimModule;
+use crate::storage::db::{get_db_path, init_db};
+
+
+pub struct AgentRuntime {
+    pub config: ConfigFile,
+    pub conn: Connection,
+}
 
 impl Agent {
-    pub fn start(conn:&Connection) -> Result<()>{
-        println!("Agent Starting...");
-        init_db(&conn)?;
-
+    pub fn start() -> Result<()> {
         const DEFAULT_CONFIG: &str = "./config/agent.toml";
 
-        let config_data = parse_config_file(DEFAULT_CONFIG.to_string())?;
+        let config = parse_config_file(DEFAULT_CONFIG.to_string())?;
 
-        if !config_data.monitor_paths.is_empty() {
-            watch_start(&config_data,&conn)?;
-        } else {
-            println!("Given Path doesn't exist");
-        }
+        let db_path = get_db_path();
+        let conn = Connection::open(db_path)?;
+        init_db(&conn)?;
+
+        let runtime = AgentRuntime {
+            config,
+            conn,
+        };
+
+        FimModule::start(&runtime)?;
+
         Ok(())
     }
 }

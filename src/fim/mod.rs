@@ -9,3 +9,4 @@ pub mod models;
 pub mod metadata;
 pub mod scanner;
 pub mod stats;
+pub mod module;
