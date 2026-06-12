@@ -99,8 +99,8 @@ Whether you're analyzing storage usage, identifying duplicate files, benchmarkin
 | Critical Path Rules   | ✅      |
 | Snapshot Engine       | ✅      |
 | Config File Support   | ✅      |
-| SQLite Storage        | 🚧     |
-| Agent Mode            | ⏳      |
+| SQLite Storage        | ✅      |
+| Agent Mode            | 🚧     |
 
 ---
 
@@ -287,6 +287,12 @@ filestat snapshot save --config config.toml
 
 ```bash
 filestat snapshot diff --config config.toml
+```
+
+#### Get Recent Alerts
+Limit flag --limit is optional default it will be 20
+```bash
+filestat alerts --limit 30
 ```
 
 #### Ignored Directories
