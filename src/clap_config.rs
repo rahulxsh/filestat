@@ -71,7 +71,8 @@ pub enum Commands {
     Alerts {
         #[arg(long,default_value_t = 20)]
         limit:usize
-    }
+    },
+    Agent
 }
 
 #[derive(Debug,Clone,Subcommand)]

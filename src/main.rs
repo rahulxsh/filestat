@@ -2,6 +2,7 @@ mod clap_config;
 mod config;
 mod storage;
 mod fim;
+mod agent;
 
 use std::collections::HashMap;
 use std::fs;
@@ -22,6 +23,7 @@ use crate::config::toml_parser::parse_config_file;
 use fim::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapshot_diff};
 use crate::storage::db::{get_db_path, init_db};
 use fim::watch::watch::watch_start;
+use crate::agent::agent::Agent;
 
 fn main() -> Result<()> {
     let db_path = get_db_path();
@@ -182,6 +184,10 @@ fn main() -> Result<()> {
             for alert in alerts {
                display_alerts(alert);
             }
+        }
+        
+        Commands::Agent => {
+            Agent::start();
         }
     }
 
