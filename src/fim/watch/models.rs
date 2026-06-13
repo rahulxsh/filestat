@@ -5,7 +5,6 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use crate::fim::models::FilterConfig;
 use crate::fim::scanner::scan;
 use anyhow::Result;
-use rusqlite::types::{FromSql, FromSqlResult, ValueRef};
 use serde::{Deserialize, Serialize};
 use crate::fim::hashing::hash_file::hash_file;
 
