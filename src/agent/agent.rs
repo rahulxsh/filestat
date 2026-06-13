@@ -11,6 +11,10 @@ pub struct AgentRuntime {
     pub conn: Connection,
 }
 
+pub trait Module {
+    fn start(runtime:&AgentRuntime) -> Result<()>;
+}
+
 impl Agent {
     pub fn start() -> Result<()> {
         const DEFAULT_CONFIG: &str = "./config/agent.toml";
