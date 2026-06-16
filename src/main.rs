@@ -25,10 +25,11 @@ use fim::snapshot::snapshot::{print_snap_shot_diff_files, save_snapshot, snapsho
 use crate::storage::db::{get_db_path, init_db};
 use fim::watch::watch::watch_start;
 use crate::agent::agent::Agent;
+use crate::process_monitor::providers::auditd::auditd_provider;
 use crate::process_monitor::providers::esf_provider::esf;
 
 fn main() -> Result<()> {
-    esf()?;
+    auditd_provider()?;
     let db_path = get_db_path();
     let conn = Connection::open(db_path)?;
     init_db(&conn)?;
