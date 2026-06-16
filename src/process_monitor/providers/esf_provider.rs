@@ -5,6 +5,7 @@ use endpoint_sec::sys::RespondError::EventType;
 use endpoint_sec::version::{is_version_or_more, set_runtime_version};
 use endpoint_sec::sys::es_event_type_t;
 
+#[cfg(target_os = "macos")]
 fn get_os_version() -> Vec<u64> {
     //TODO:First GET the entitlement from apple developer
     let info  = os_info::get();
