@@ -28,7 +28,9 @@ use crate::agent::agent::Agent;
 use crate::process_monitor::providers::auditd::auditd_provider;
 
 fn main() -> Result<()> {
+    println!("Before Auditd provider");
     auditd_provider()?;
+    println!("After auditd provider");
     let db_path = get_db_path();
     let conn = Connection::open(db_path)?;
     init_db(&conn)?;
