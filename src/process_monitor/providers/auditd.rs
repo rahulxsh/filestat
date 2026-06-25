@@ -8,7 +8,7 @@ pub fn auditd_provider() -> Result<()> {
 
     let mut reader = BufReader::new(file);
 
-    reader.seek(SeekFrom::End(0));
+    reader.seek(SeekFrom::End(0))?;
     let mut map:HashMap<u64,Vec<HashMap<String,String>>> = HashMap::new();
 
     loop {
@@ -18,8 +18,15 @@ pub fn auditd_provider() -> Result<()> {
             let fields = parse_fields(&line);
             let event_id = event_id(&line);
 
-            if let Some(id) = event_id {
-                map.entry(id).or_default().push(fields)
+            if let Some(record_type) = fields.get("type") {
+                if matches!(
+                    record_type.as_str(),
+                    "SYSCALL" | "EXECVE" | "CWD" | "PATH" | "PROCTITLE"
+                ) {
+                    if let Some(id) = event_id {
+                        map.entry(id).or_default().push(fields)
+                    }
+                }
             }
         }
         line.clear();
