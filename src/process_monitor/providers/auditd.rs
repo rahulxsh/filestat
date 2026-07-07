@@ -8,6 +8,7 @@ pub fn auditd_provider() -> Result<()> {
 
     let mut reader = BufReader::new(file);
 
+    //TODO:Update it to SeekFrom::End(0) the current one only for testing
     reader.seek(SeekFrom::Start(0))?;
     let mut map:HashMap<u64,Vec<HashMap<String,String>>> = HashMap::new();
 

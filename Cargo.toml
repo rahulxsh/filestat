@@ -19,3 +19,4 @@ rusqlite = { version = "0.40.1", features = ["bundled"]}
 dirs = "6.0.0"
 endpoint-sec = { version = "0.6.0", features = ["audit_token_from_pid"]}
 os_info = "3.15.0"
+hex = "0.4.3"
