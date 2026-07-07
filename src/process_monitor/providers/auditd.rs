@@ -3,43 +3,45 @@ use std::fs::File;
 use std::io::{BufReader,BufRead,Seek,SeekFrom};
 use anyhow::Result;
 
+
 pub fn auditd_provider() -> Result<()> {
     let mut file = File::open("/var/log/audit/audit.log")?;
 
     let mut reader = BufReader::new(file);
 
-    //TODO:Update it to SeekFrom::End(0) the current one only for testing
-    reader.seek(SeekFrom::Start(0))?;
+    reader.seek(SeekFrom::End(0))?;
     let mut map:HashMap<u64,Vec<HashMap<String,String>>> = HashMap::new();
 
     loop {
         let mut line = String::new();
 
         if reader.read_line(&mut line)? > 0 {
-            let fields = parse_fields(&line);
-            let event_id = event_id(&line);
 
-            if let Some(record_type) = fields.get("type") {
+            if let Some((event_id,record)) = parse_fields(&line) {
                 if matches!(
-                    record_type.as_str(),
+                    record.audit_type.as_str(),
                     "SYSCALL" | "EXECVE" | "CWD" | "PATH" | "PROCTITLE"
                 ) {
-                    if let Some(id) = event_id {
-                        map.entry(id).or_default().push(fields)
-                    }
+                        map.entry(event_id).or_default().push(record.fields)
                 }
             }
         }
         line.clear();
 
         std::thread::sleep(std::time::Duration::from_millis(100));
-        println!("Process Logs:{:?}",map);
+        println!("Process Logs:{:?}\n\n",map);
     }
 }
+struct AuditRecord {
+    audit_type:String,
+    fields:HashMap<String,String>
+}
 
-
-fn parse_fields(line:&str) -> HashMap<String,String> {
+fn parse_fields(line:&str) -> Option<(u64, AuditRecord)> {
     let mut map = HashMap::new();
+
+
+    let event_id = event_id(line)?;
 
     for part in line.split_whitespace() {
         if let Some((key,value)) =  part.split_once("="){
@@ -49,7 +51,15 @@ fn parse_fields(line:&str) -> HashMap<String,String> {
             );
         }
     }
-    map
+
+    let record_type = map.get("type").cloned().unwrap_or_else(|| String::from("UNKNOWN"));
+
+    let record = AuditRecord {
+        audit_type:record_type,
+        fields:map
+    };
+
+    Some((event_id,record))
 }
 
 fn event_id(line: &str) -> Option<u64> {
