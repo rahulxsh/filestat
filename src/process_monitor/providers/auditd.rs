@@ -5,7 +5,7 @@ use anyhow::Result;
 
 
 pub fn auditd_provider() -> Result<()> {
-    let mut file = File::open("/var/log/audit/audit.log")?;
+    let file = File::open("/var/log/audit/audit.log")?;
 
     let mut reader = BufReader::new(file);
 
@@ -29,9 +29,10 @@ pub fn auditd_provider() -> Result<()> {
         line.clear();
 
         std::thread::sleep(std::time::Duration::from_millis(100));
-        println!("Process Logs:{:?}\n\n",map);
     }
 }
+
+#[derive(Debug)]
 struct AuditRecord {
     audit_type:String,
     fields:HashMap<String,String>
@@ -58,6 +59,9 @@ fn parse_fields(line:&str) -> Option<(u64, AuditRecord)> {
         audit_type:record_type,
         fields:map
     };
+
+    println!("RECORD_TYPE:{}",record.audit_type);
+    println!("RECORD_FIELDS:{:?}",record.fields);
 
     Some((event_id,record))
 }
