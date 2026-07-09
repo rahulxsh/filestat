@@ -10,7 +10,7 @@ pub fn auditd_provider() -> Result<()> {
     let mut reader = BufReader::new(file);
 
     reader.seek(SeekFrom::End(0))?;
-    let mut map:HashMap<u64,Vec<HashMap<String,String>>> = HashMap::new();
+    let mut map:HashMap<u64,Vec<AuditRecord>> = HashMap::new();
 
     loop {
         let mut line = String::new();
@@ -22,11 +22,12 @@ pub fn auditd_provider() -> Result<()> {
                     record.audit_type.as_str(),
                     "SYSCALL" | "EXECVE" | "CWD" | "PATH" | "PROCTITLE"
                 ) {
-                        map.entry(event_id).or_default().push(record.fields)
+                        map.entry(event_id).or_default().push(record)
                 }
             }
         }
         line.clear();
+        println!("MAP LENGTH: {}",map.len());
 
         std::thread::sleep(std::time::Duration::from_millis(100));
     }
@@ -59,9 +60,6 @@ fn parse_fields(line:&str) -> Option<(u64, AuditRecord)> {
         audit_type:record_type,
         fields:map
     };
-
-    println!("RECORD_TYPE:{}",record.audit_type);
-    println!("RECORD_FIELDS:{:?}",record.fields);
 
     Some((event_id,record))
 }
