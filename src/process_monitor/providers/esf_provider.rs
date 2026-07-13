@@ -1,4 +1,4 @@
-use crate::process_monitor::process::ProcessEvent;
+use crate::process_monitor::process::{ProcessEvent, ProcessExecEvent, ProcessExitEvent};
 use anyhow::Result;
 use endpoint_sec::sys::es_event_type_t;
 use endpoint_sec::{Client, Event};
@@ -35,11 +35,11 @@ pub fn esf() -> Result<()> {
             let target = exec.target();
             let uid = target.audit_token().euid();
 
-            let process = ProcessEvent {
+            let process = ProcessExecEvent {
                 timestamp: message.time(),
                 pid: target.audit_token().pid() as u32,
                 ppid: target.ppid() as u32,
-                uid: uid as u32,
+                uid: uid.to_string(),
                 user: username_from_uid(uid),
                 executable_path: target.executable().path().to_string_lossy().into_owned(),
                 command_line: exec
@@ -49,9 +49,17 @@ pub fn esf() -> Result<()> {
             };
 
             println!("PROCESS:{:?}\n\n", process);
+            let _event  = ProcessEvent::Start(process);
         }
         Some(Event::NotifyExit(exit)) => {
-            println!("EXIT EVENT: {:?}", exit.stat());
+            let process = message.process();
+            let process_exit_event = ProcessExitEvent {
+                timestamp:message.time(),
+                pid:process.audit_token().pid() as u32,
+                exit_code:exit.stat()
+            };
+            println!("EXIT EVENT: {:?}", process_exit_event);
+            let _event  = ProcessEvent::Exit(process_exit_event);
         }
         _ => {}
     })?;
