@@ -3,3 +3,5 @@
 .snapshots
 .idea
 .DS_Store
+/start.sh
+/entitlements.plist

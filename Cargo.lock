@@ -345,6 +345,7 @@ dependencies = [
  "dirs",
  "endpoint-sec",
  "hex",
+ "nix",
  "notify",
  "os_info",
  "rayon",
