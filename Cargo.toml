@@ -17,7 +17,13 @@ notify = { version = "8.2.0", features = ["serde"]}
 toml = "0.9.8"
 rusqlite = { version = "0.40.1", features = ["bundled"]}
 dirs = "6.0.0"
+
+[target.'cfg(target_os= "macos")'.dependencies]
 endpoint-sec = { version = "0.6.0", features = ["audit_token_from_pid"]}
+nix = { version = "0.31.3", features = ["user"]}
+
 os_info = "3.15.0"
 hex = "0.4.3"
-nix = { version = "0.31.3", features = ["user"]}
+
+[target.'cfg(target_os= "linux")'.dependencies]
+netlink-sys = "0.8.8"
