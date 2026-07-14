@@ -89,7 +89,7 @@ pub fn netlink_audit() -> Result<()> {
     let mut buffer = vec![0; 8192];
 
     loop {
-        let data = socket.recv_from(&mut buffer)?;
+        let data = socket.recv_from(&mut buffer,0)?;
 
         println!("Received bytes for socket:{:?}",data.0);
     }
