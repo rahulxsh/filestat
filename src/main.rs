@@ -30,11 +30,11 @@ use crate::agent::agent::Agent;
 use crate::process_monitor::providers::esf_provider::esf;
 
 #[cfg(target_os = "linux")]
-use crate::process_monitor::providers::auditd::auditd_provider;
+use crate::process_monitor::providers::auditd::netlink_audit;
 
 fn main() -> Result<()> {
     #[cfg(target_os = "linux")]
-    auditd_provider()?;
+    netlink_audit()?;
 
     #[cfg(target_os = "macos")]
     esf()?;

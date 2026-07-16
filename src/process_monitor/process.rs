@@ -18,12 +18,13 @@ pub struct ProcessExitEvent {
     pub exit_code: i32,
 }
 
-
+#[allow(dead_code)]
 pub enum ProcessEvent {
     Start(ProcessExecEvent),
     Exit(ProcessExitEvent),
 }
 
+#[allow(dead_code)]
 pub trait ProcessProvider {
     fn start(&self) -> anyhow::Result<()>;
 }
