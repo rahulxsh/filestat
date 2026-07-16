@@ -76,21 +76,21 @@
 //     after_colon[..end].parse().ok()
 // }
 
-use netlink_sys::{protocols::NETLINK_ROUTE, Socket, SocketAddr};
 use anyhow::Result;
+use netlink_sys::{protocols::NETLINK_AUDIT, Socket, SocketAddr};
 
 pub fn netlink_audit() -> Result<()> {
-    let mut socket = Socket::new(NETLINK_ROUTE)?;
+    let mut socket = Socket::new(NETLINK_AUDIT)?;
 
-    let kernal_addr = SocketAddr::new(0,0);
+    let kernal_addr = SocketAddr::new(0, 0);
 
     socket.bind(&kernal_addr);
 
     let mut buffer = vec![0; 8192];
 
     loop {
-        let data = socket.recv_from(&mut buffer,0)?;
+        let data = socket.recv_from(&mut buffer, 0)?;
 
-        println!("Received bytes for socket:{:?}",data.0);
+        println!("Received bytes for socket:{:?}", data.0);
     }
 }

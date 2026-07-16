@@ -26,3 +26,4 @@ nix = { version = "0.31.3", features = ["user"]}
 
 [target.'cfg(target_os= "linux")'.dependencies]
 netlink-sys = "0.8.8"
+libc = "0.2.186"

@@ -351,6 +351,7 @@ dependencies = [
  "dirs",
  "endpoint-sec",
  "hex",
+ "libc",
  "netlink-sys",
  "nix",
  "notify",
